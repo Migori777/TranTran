@@ -16,7 +16,7 @@ struct ActivityRow: View {
                 .fontWeight(.semibold)
                 .foregroundStyle(Color(.activityInk))
                 .frame(width: 36, height: 36)
-                .background(Color(.activityRose))
+                .background(Color(activity.color.fill))
                 .clipShape(.rect(cornerRadius: 13))
             VStack(alignment: .leading, spacing: 1) {
                 Text(activity.title)
@@ -55,7 +55,11 @@ struct ActivityRow: View {
     ZStack {
         Color(.appBackground)
             .ignoresSafeArea()
-        ActivityRow(activity: Activity.samples[1])
-            .padding()
+        VStack(spacing: 8) {
+            ActivityRow(activity: Activity.samples[1])
+            ActivityRow(activity: Activity.samples[2])
+            ActivityRow(activity: Activity.samples[3])
+        }
+        .padding()
     }
 }
