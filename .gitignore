@@ -22,3 +22,7 @@ build/
 # Playground
 timeline.xctimeline
 playground.xcworkspace
+
+# Claude Code: istruzioni e impostazioni locali
+CLAUDE.md
+.claude/
