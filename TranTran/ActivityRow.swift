@@ -11,36 +11,51 @@ struct ActivityRow: View {
     let activity: Activity
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 10) {
             Image(systemName: activity.symbol)
+                .fontWeight(.semibold)
+                .foregroundStyle(Color(.activityInk))
                 .frame(width: 36, height: 36)
-                .background(.orange.opacity(0.25))
-                .clipShape(.rect(cornerRadius: 12))
-            VStack(alignment: .leading, spacing: 2) {
+                .background(Color(.activityRose))
+                .clipShape(.rect(cornerRadius: 13))
+            VStack(alignment: .leading, spacing: 1) {
                 Text(activity.title)
-                    .font(.headline)
+                    .font(.callout)
+                    .fontWeight(.heavy)
                 HStack(spacing: 6) {
                     Text(activity.timeText)
                         .fontWeight(.bold)
                     Text(activity.note)
-                        .foregroundStyle(.secondary)
+                        .fontWeight(.bold)
+                        .foregroundStyle(Color(.textSecondary))
                 }
                 .font(.footnote)
                 .lineLimit(1)
             }
             
             Spacer()
+            
             Image(systemName: activity.isDone ? "checkmark.circle.fill" : "circle")
-                .font(.title2)
-                .foregroundStyle(activity.isDone ? Color.accentColor : Color.secondary)
+                            .font(.title2)
+                            .foregroundStyle(activity.isDone ? Color.accentColor : Color(.ring))
+                            .frame(width: 44, height: 44)
         }
-        .padding(12)
-        .background(Color.gray.opacity(0.15))
+        .padding(.leading, 14)
+        .padding(.trailing, 4)
+        .frame(minHeight: 58)
+        .foregroundStyle(Color(.textPrimary))
+        .background(Color(.surface))
         .clipShape(.rect(cornerRadius: 20))
+        .fontDesign(.rounded)
+        
     }
 }
 
 #Preview {
-    ActivityRow(activity: Activity.samples[0])
-        .padding()
+    ZStack {
+        Color(.appBackground)
+            .ignoresSafeArea()
+        ActivityRow(activity: Activity.samples[1])
+            .padding()
+    }
 }
