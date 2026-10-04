@@ -15,6 +15,9 @@ struct Activity: Identifiable {
     var minute: Int
     var symbol: String
     var isDone: Bool = false
+    var timeText: String {
+        String(format: "%02d:%02d", hour, minute)
+    }
     static let samples: [Activity] = [
         Activity(title: "Sveglia", note: "Alla quarta, ma conta.", hour: 7, minute: 0, symbol: "sun.max", isDone: true),
         Activity(title: "Lavoro profondo", note: "Profondo quanto basta.", hour: 9, minute: 0, symbol: "laptopcomputer"),
