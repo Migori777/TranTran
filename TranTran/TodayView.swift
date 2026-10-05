@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TodayView: View {
-    @State private var activities = Activity.samples
+    @State private var store = ActivityStore()
     
     private var today: Date {
         Date.now
@@ -38,15 +38,15 @@ struct TodayView: View {
     }
     
     private var doneCount: Int {
-        activities.filter{ activity in activity.isDone }.count
+        store.activities.filter{ activity in activity.isDone }.count
     }
     
     private var summaryText: String {
         let word = doneCount == 1 ? "fatta" : "fatte"
-        if doneCount == activities.count {
+        if doneCount == store.activities.count {
             return "Ottimo! Hai completato tutte le attività!"
         }
-        return "\(doneCount) \(word) su \(activities.count). Il resto è ottimismo."
+        return "\(doneCount) \(word) su \(store.activities.count). Il resto è ottimismo."
     }
     
     var body: some View {
@@ -69,7 +69,7 @@ struct TodayView: View {
                 }
                 
                 VStack(spacing: 8) {
-                    ForEach($activities) { $activity in
+                    ForEach($store.activities) { $activity in
                         ActivityRow(activity: $activity)
                     }
                 }
