@@ -11,6 +11,14 @@ struct ActivityRow: View {
     @Binding var activity: Activity
     
     var body: some View {
+        if activity.isDone {
+            doneRow
+        } else {
+            todoRow
+        }
+    }
+    
+    private var todoRow: some View {
         HStack(spacing: 10) {
             Image(systemName: activity.symbol)
                 .fontWeight(.semibold)
@@ -37,11 +45,11 @@ struct ActivityRow: View {
             Button{
                 activity.isDone.toggle()
             } label: {
-                Image(systemName: activity.isDone ? "checkmark.circle.fill" : "circle")
-                                .font(.title2)
-                                .foregroundStyle(activity.isDone ? Color.accentColor : Color(.ring))
-                                .frame(width: 44, height: 44)
-                                .contentShape(.rect)
+                Image(systemName: "circle")
+                    .font(.title2)
+                    .foregroundStyle(activity.isDone ? Color.accentColor : Color(.ring))
+                    .frame(width: 44, height: 44)
+                    .contentShape(.rect)
             }
         }
         .padding(.leading, 14)
@@ -53,6 +61,46 @@ struct ActivityRow: View {
         .fontDesign(.rounded)
         
     }
+    
+    private var doneRow: some View {
+        HStack(spacing: 8) {
+            Text(activity.timeText)
+                .font(.footnote)
+                .fontWeight(.heavy)
+                .frame(minWidth: 42, alignment: .leading)
+            Text(activity.title)
+                .font(.subheadline)
+                .fontWeight(.heavy)
+                .strikethrough()
+                .layoutPriority(1)
+            
+            Text(activity.note)
+                .font(.footnote)
+                .fontWeight(.bold)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            
+            Button {
+                activity.isDone.toggle()
+            } label: {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.title2)
+                    .symbolRenderingMode(.palette)
+                    .foregroundStyle(Color(.onAccent), Color.accentColor)
+                    .frame(width: 44, height: 44)
+                    .contentShape(.rect)
+            }
+            .buttonStyle(.plain)
+        }
+        .lineLimit(1)
+        .padding(.leading, 14)
+        .padding(.trailing, 4)
+        .frame(minHeight: 46)
+        .foregroundStyle(Color(.textSecondary))
+        .background(Color(.surfaceMuted))
+        .clipShape(.rect(cornerRadius: 16))
+        .fontDesign(.rounded)
+        
+    }
 }
 
 #Preview {
@@ -60,7 +108,7 @@ struct ActivityRow: View {
         Color(.appBackground)
             .ignoresSafeArea()
         VStack(spacing: 8) {
-            ActivityRow(activity: .constant(Activity.samples[1]))
+            ActivityRow(activity: .constant(Activity.samples[0]))
             ActivityRow(activity: .constant(Activity.samples[2]))
             ActivityRow(activity: .constant(Activity.samples[3]))
         }
