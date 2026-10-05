@@ -47,10 +47,11 @@ struct ActivityRow: View {
             } label: {
                 Image(systemName: "circle")
                     .font(.title2)
-                    .foregroundStyle(activity.isDone ? Color.accentColor : Color(.ring))
+                    .foregroundStyle(Color(.ring))
                     .frame(width: 44, height: 44)
                     .contentShape(.rect)
             }
+            .buttonStyle(.plain)
         }
         .padding(.leading, 14)
         .padding(.trailing, 4)
