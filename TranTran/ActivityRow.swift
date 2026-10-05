@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ActivityRow: View {
-    let activity: Activity
+    @Binding var activity: Activity
     
     var body: some View {
         HStack(spacing: 10) {
@@ -34,11 +34,15 @@ struct ActivityRow: View {
             }
             
             Spacer()
-            
-            Image(systemName: activity.isDone ? "checkmark.circle.fill" : "circle")
-                            .font(.title2)
-                            .foregroundStyle(activity.isDone ? Color.accentColor : Color(.ring))
-                            .frame(width: 44, height: 44)
+            Button{
+                activity.isDone.toggle()
+            } label: {
+                Image(systemName: activity.isDone ? "checkmark.circle.fill" : "circle")
+                                .font(.title2)
+                                .foregroundStyle(activity.isDone ? Color.accentColor : Color(.ring))
+                                .frame(width: 44, height: 44)
+                                .contentShape(.rect)
+            }
         }
         .padding(.leading, 14)
         .padding(.trailing, 4)
@@ -56,9 +60,9 @@ struct ActivityRow: View {
         Color(.appBackground)
             .ignoresSafeArea()
         VStack(spacing: 8) {
-            ActivityRow(activity: Activity.samples[1])
-            ActivityRow(activity: Activity.samples[2])
-            ActivityRow(activity: Activity.samples[3])
+            ActivityRow(activity: .constant(Activity.samples[1]))
+            ActivityRow(activity: .constant(Activity.samples[2]))
+            ActivityRow(activity: .constant(Activity.samples[3]))
         }
         .padding()
     }

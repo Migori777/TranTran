@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TodayView: View {
-    let activities = Activity.samples
+    @State private var activities = Activity.samples
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
@@ -22,8 +22,8 @@ struct TodayView: View {
                 }
                 
                 VStack(spacing: 8) {
-                    ForEach(activities) { activity in
-                        ActivityRow(activity: activity)
+                    ForEach($activities) { $activity in
+                        ActivityRow(activity: $activity)
                     }
                 }
             }
