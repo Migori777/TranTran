@@ -10,6 +10,33 @@ import SwiftUI
 struct TodayView: View {
     @State private var activities = Activity.samples
     
+    private var today: Date {
+        Date.now
+    }
+    
+    private var dateText: String {
+        let italian = Locale(identifier: "it_IT")
+        let format = Date.FormatStyle.dateTime.weekday(.wide).day().month(.wide).locale(italian)
+        return today.formatted(format)
+    }
+    
+    private var weekday: Int {
+        Calendar.current.component(.weekday, from: today)
+    }
+    
+    private var titleText: String {
+        switch weekday {
+        case 1: "Domenica. Fai poco."
+        case 2: "Coraggio, è lunedì."
+        case 3: "È solo martedì."
+        case 4: "Metà strada. Forse."
+        case 5: "Quasi venerdì."
+        case 6: "Venerdì. Resisti."
+        case 7: "Sabato. Con calma."
+        default: "Un altro giorno."
+        }
+    }
+    
     private var doneCount: Int {
         activities.filter{ activity in activity.isDone }.count
     }
@@ -26,13 +53,13 @@ struct TodayView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Lunedì 5 ottobre")
+                    Text(dateText)
                         .font(.footnote)
                         .fontWeight(.heavy)
                         .textCase(.uppercase)
                         .kerning(0.8)
                         .foregroundStyle(Color(.textSecondary))
-                    Text("Coraggio è lunedì.")
+                    Text(titleText)
                         .font(.title)
                         .fontWeight(.black)
                     Text(summaryText)
