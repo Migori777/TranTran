@@ -26,6 +26,7 @@ struct NowCard: View {
                     .font(.footnote)
                     .fontWeight(.bold)
                     .opacity(0.8)
+                progressBar
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             
@@ -50,6 +51,20 @@ struct NowCard: View {
         .background(activity.color.fill)
         .clipShape(.rect(cornerRadius: 26))
         .fontDesign(.rounded)
+    }
+    
+    private var progressBar: some View {
+        GeometryReader { geometry in
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(Color(.activityInk).opacity(0.16))
+                Capsule()
+                    .fill(Color(.activityInk))
+                    .frame(width: geometry.size.width * activity.progress(at: nowMinutes))
+            }
+        }
+        .frame(height: 8)
+        .padding(.top, 4)
     }
 }
 

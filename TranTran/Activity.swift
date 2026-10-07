@@ -70,6 +70,10 @@ struct Activity: Identifiable {
         return String(format: "Mancano %d h %02d.", hours, mins)
     }
     
+    func progress(at minutes: Int) -> Double {
+        Double(minutes - startMinutes) / Double(durationMinutes)
+    }
+    
     static let samples: [Activity] = [
         Activity(title: "Sveglia", note: "Alla quarta, ma conta.", hour: 7, minute: 0, durationMinutes: 30, symbol: "sun.max", color: .sky, isDone: true),
         Activity(title: "Lavoro profondo", note: "Profondo quanto basta.", hour: 9, minute: 0, durationMinutes: 240, symbol: "laptopcomputer", color: .sun),
