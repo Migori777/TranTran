@@ -56,40 +56,42 @@ struct TodayView: View {
     }
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(dateText)
-                        .font(.footnote)
-                        .fontWeight(.heavy)
-                        .textCase(.uppercase)
-                        .kerning(0.8)
-                        .foregroundStyle(Color(.textSecondary))
-                    Text(titleText)
-                        .font(.title)
-                        .fontWeight(.black)
-                    Text(summaryText)
-                        .font(.subheadline)
-                        .fontWeight(.bold)
-                        .foregroundStyle(Color(.textSecondary))
-                }
-                
-                VStack(spacing: 8) {
-                    ForEach($store.activities) { $activity in
-                        if activity.isNow(at: nowMinutes) && !activity.isDone {
-                            NowCard(activity: $activity, nowMinutes: nowMinutes)
-                        } else {
-                            ActivityRow(activity: $activity)
+        TimelineView(.everyMinute) { _ in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(dateText)
+                            .font(.footnote)
+                            .fontWeight(.heavy)
+                            .textCase(.uppercase)
+                            .kerning(0.8)
+                            .foregroundStyle(Color(.textSecondary))
+                        Text(titleText)
+                            .font(.title)
+                            .fontWeight(.black)
+                        Text(summaryText)
+                            .font(.subheadline)
+                            .fontWeight(.bold)
+                            .foregroundStyle(Color(.textSecondary))
+                    }
+                    
+                    VStack(spacing: 8) {
+                        ForEach($store.activities) { $activity in
+                            if activity.isNow(at: nowMinutes) && !activity.isDone {
+                                NowCard(activity: $activity, nowMinutes: nowMinutes)
+                            } else {
+                                ActivityRow(activity: $activity)
+                            }
                         }
                     }
                 }
+                .padding(.horizontal, 20)
+                .padding(.top, 8)
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 8)
+            .background(Color(.appBackground))
+            .foregroundStyle(Color(.textPrimary))
+            .fontDesign(.rounded)
         }
-        .background(Color(.appBackground))
-        .foregroundStyle(Color(.textPrimary))
-        .fontDesign(.rounded)
     }
 }
 
