@@ -77,7 +77,7 @@ struct TodayView: View {
                 VStack(spacing: 8) {
                     ForEach($store.activities) { $activity in
                         if activity.isNow(at: nowMinutes) && !activity.isDone {
-                            NowCard(activity: $activity)
+                            NowCard(activity: $activity, nowMinutes: nowMinutes)
                         } else {
                             ActivityRow(activity: $activity)
                         }

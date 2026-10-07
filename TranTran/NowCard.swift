@@ -9,6 +9,7 @@ import SwiftUI
 
 struct NowCard: View {
     @Binding var activity: Activity
+    let nowMinutes: Int
     
     var body: some View {
         HStack(spacing: 12) {
@@ -21,7 +22,7 @@ struct NowCard: View {
                 Text(activity.title)
                     .font(.title2)
                     .fontWeight(.black)
-                Text(activity.note)
+                Text("\(activity.note) \(activity.remainingText(at: nowMinutes))")
                     .font(.footnote)
                     .fontWeight(.bold)
                     .opacity(0.8)
@@ -56,7 +57,7 @@ struct NowCard: View {
     ZStack {
         Color(.appBackground)
             .ignoresSafeArea()
-        NowCard(activity: .constant(Activity.samples[1]))
+        NowCard(activity: .constant(Activity.samples[1]), nowMinutes: 11 * 60 + 20)
             .padding()
     }
 }

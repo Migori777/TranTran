@@ -57,6 +57,19 @@ struct Activity: Identifiable {
         startMinutes <= minutes && minutes < endMinutes
     }
     
+    func remainingText(at minutes: Int) -> String {
+        let remaining = endMinutes - minutes
+        let hours = remaining / 60
+        let mins = remaining % 60
+        if hours == 0 {
+            return mins == 1 ? "Manca 1 min." : "Mancano \(mins) min."
+        }
+        if mins == 0 {
+            return hours == 1 ? "Manca 1 h." : "Mancano \(hours) h."
+        }
+        return String(format: "Mancano %d h %02d.", hours, mins)
+    }
+    
     static let samples: [Activity] = [
         Activity(title: "Sveglia", note: "Alla quarta, ma conta.", hour: 7, minute: 0, durationMinutes: 30, symbol: "sun.max", color: .sky, isDone: true),
         Activity(title: "Lavoro profondo", note: "Profondo quanto basta.", hour: 9, minute: 0, durationMinutes: 240, symbol: "laptopcomputer", color: .sun),
