@@ -12,7 +12,7 @@ struct NowCard: View {
     var body: some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Adesso · \(activity.timeText)")
+                Text("Adesso · \(activity.intervalText)")
                     .font(.caption)
                     .fontWeight(.black)
                     .textCase(.uppercase)
