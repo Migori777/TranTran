@@ -24,6 +24,12 @@ struct TodayView: View {
         Calendar.current.component(.weekday, from: today)
     }
     
+    private var nowMinutes: Int {
+        let hour = Calendar.current.component(.hour, from: today)
+        let minute = Calendar.current.component(.minute, from: today)
+        return hour * 60 + minute
+    }
+    
     private var titleText: String {
         switch weekday {
         case 1: "Domenica. Fai poco."
@@ -70,7 +76,11 @@ struct TodayView: View {
                 
                 VStack(spacing: 8) {
                     ForEach($store.activities) { $activity in
-                        ActivityRow(activity: $activity)
+                        if activity.isNow(at: nowMinutes) && !activity.isDone {
+                            NowCard(activity: $activity)
+                        } else {
+                            ActivityRow(activity: $activity)
+                        }
                     }
                 }
             }

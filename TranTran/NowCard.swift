@@ -9,6 +9,7 @@ import SwiftUI
 
 struct NowCard: View {
     @Binding var activity: Activity
+    
     var body: some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {

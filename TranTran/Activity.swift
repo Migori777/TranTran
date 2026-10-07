@@ -32,21 +32,31 @@ struct Activity: Identifiable {
     var symbol: String
     var color: ActivityColor
     var isDone: Bool = false
+    
     var timeText: String {
         String(format: "%02d:%02d", hour, minute)
     }
+    
     var startMinutes: Int {
         hour * 60 + minute
     }
+    
     var endMinutes: Int {
         startMinutes + durationMinutes
     }
+    
     var endTimeText: String {
         String(format: "%02d:%02d", endMinutes / 60 % 24, endMinutes % 60)
     }
+    
     var intervalText: String {
         "\(timeText) – \(endTimeText)"
     }
+    
+    func isNow(at minutes: Int) -> Bool {
+        startMinutes <= minutes && minutes < endMinutes
+    }
+    
     static let samples: [Activity] = [
         Activity(title: "Sveglia", note: "Alla quarta, ma conta.", hour: 7, minute: 0, durationMinutes: 30, symbol: "sun.max", color: .sky, isDone: true),
         Activity(title: "Lavoro profondo", note: "Profondo quanto basta.", hour: 9, minute: 0, durationMinutes: 240, symbol: "laptopcomputer", color: .sun),
