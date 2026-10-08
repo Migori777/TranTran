@@ -75,7 +75,7 @@ struct TodayView: View {
                             .foregroundStyle(Color(.textSecondary))
                     }
                     
-                    WeekStrip()
+                    WeekStrip(today: today)
                     
                     VStack(spacing: 8) {
                         ForEach($store.activities) { $activity in
