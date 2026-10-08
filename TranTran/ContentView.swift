@@ -20,7 +20,7 @@ struct ContentView: View {
                 Text("Bilancio")
             }
         }
-        
+        .tabViewStyle(.sidebarAdaptable)
     }
 }
 
