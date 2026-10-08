@@ -29,7 +29,8 @@ struct WeekStrip: View {
                 } label: {
                     DayCell(letter: initials[index],
                             number: Calendar.current.component(.day, from: date(at: index)),
-                            isSelected: Calendar.current.isDate(date(at: index), inSameDayAs: selectedDate))
+                            isSelected: Calendar.current.isDate(date(at: index), inSameDayAs: selectedDate),
+                            isToday: Calendar.current.isDate(date(at: index), inSameDayAs: today))
                 }
                 .buttonStyle(.plain)
             }
@@ -42,6 +43,16 @@ struct DayCell: View {
     let letter: String
     let number: Int
     let isSelected: Bool
+    let isToday: Bool
+
+    private var numberColor: Color {
+        if isSelected {
+            return Color(.onAccent)
+        } else if isToday && !isSelected {
+            return Color.accentColor
+        }
+        return Color(.textPrimary)
+    }
     
     var body: some View {
         VStack(spacing: 1) {
@@ -52,7 +63,7 @@ struct DayCell: View {
             Text("\(number)")
                 .font(.body)
                 .fontWeight(.black)
-                .foregroundStyle(isSelected ? Color(.onAccent) : Color(.textPrimary))
+                .foregroundStyle(numberColor)
         }
         .frame(maxWidth: .infinity, minHeight: 58)
         .background(isSelected ? Color.accentColor : Color(.surface))
