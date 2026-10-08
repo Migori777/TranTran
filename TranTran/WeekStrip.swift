@@ -68,6 +68,12 @@ struct DayCell: View {
         .frame(maxWidth: .infinity, minHeight: 58)
         .background(isSelected ? Color.accentColor : Color(.surface))
         .clipShape(.rect(cornerRadius: 18))
+        .overlay {
+            if isToday && !isSelected {
+                RoundedRectangle(cornerRadius: 18)
+                    .strokeBorder(Color.accentColor, lineWidth: 2.5)
+            }
+        }
     }
 }
 
