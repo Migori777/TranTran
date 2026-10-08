@@ -8,16 +8,17 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var store = ActivityStore()
     var body: some View {
         TabView {
             Tab("Oggi", systemImage: "calendar") {
-                TodayView()
+                TodayView(store: store)
             }
             Tab("Routine", systemImage: "repeat") {
                 Text("Routine")
             }
             Tab("Bilancio", systemImage: "chart.bar") {
-                Text("Bilancio")
+                Text("\(store.doneCount)")
             }
         }
         .tabViewStyle(.sidebarAdaptable)

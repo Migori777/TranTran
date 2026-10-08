@@ -10,4 +10,7 @@ import SwiftUI
 @Observable
 class ActivityStore {
     var activities = Activity.samples
+    var doneCount: Int {
+        activities.filter{ activity in activity.isDone }.count
+    }
 }
