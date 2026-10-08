@@ -7,17 +7,24 @@
 
 import SwiftUI
 
+enum AppSection {
+    case today
+    case routine
+    case balance
+}
+
 struct ContentView: View {
     @State private var store = ActivityStore()
+    @State private var selectedSection = AppSection.today
     var body: some View {
-        TabView {
-            Tab("Oggi", systemImage: "calendar") {
+        TabView(selection: $selectedSection) {
+            Tab("Oggi", systemImage: "calendar", value: .today) {
                 TodayView(store: store)
             }
-            Tab("Routine", systemImage: "repeat") {
+            Tab("Routine", systemImage: "repeat", value: .routine) {
                 Text("Routine")
             }
-            Tab("Bilancio", systemImage: "chart.bar") {
+            Tab("Bilancio", systemImage: "chart.bar", value: .balance) {
                 Text("\(store.doneCount)")
             }
         }
