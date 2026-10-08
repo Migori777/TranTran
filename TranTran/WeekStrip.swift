@@ -9,6 +9,7 @@ import SwiftUI
 
 struct WeekStrip: View {
     let today: Date
+    @Binding var selectedDate: Date
     private let initials = ["L", "M", "M", "G", "V", "S", "D"]
     private var monday: Date {
         let weekday = Calendar.current.component(.weekday, from: today)
@@ -23,9 +24,14 @@ struct WeekStrip: View {
     var body: some View {
         HStack(spacing: 6) {
             ForEach(0..<7) { index in
-                DayCell(letter: initials[index],
-                        number: Calendar.current.component(.day, from: date(at: index)),
-                        isSelected: Calendar.current.isDate(date(at: index), inSameDayAs: today))
+                Button {
+                    selectedDate = date(at: index)
+                } label: {
+                    DayCell(letter: initials[index],
+                            number: Calendar.current.component(.day, from: date(at: index)),
+                            isSelected: Calendar.current.isDate(date(at: index), inSameDayAs: selectedDate))
+                }
+                .buttonStyle(.plain)
             }
         }
         .fontDesign(.rounded)
@@ -58,7 +64,7 @@ struct DayCell: View {
     ZStack {
         Color(.appBackground)
             .ignoresSafeArea()
-        WeekStrip(today: Date.now)
+        WeekStrip(today: Date.now, selectedDate: .constant(Date.now))
             .padding(.horizontal, 20)
     }
 }

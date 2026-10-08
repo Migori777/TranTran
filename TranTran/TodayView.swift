@@ -9,6 +9,7 @@ import SwiftUI
 
 struct TodayView: View {
     @State private var store = ActivityStore()
+    @State private var selectedDate = Date.now
     
     private var today: Date {
         Date.now
@@ -75,7 +76,7 @@ struct TodayView: View {
                             .foregroundStyle(Color(.textSecondary))
                     }
                     
-                    WeekStrip(today: today)
+                    WeekStrip(today: today, selectedDate: $selectedDate)
                     
                     VStack(spacing: 8) {
                         ForEach($store.activities) { $activity in
