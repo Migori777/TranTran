@@ -75,6 +75,8 @@ struct TodayView: View {
                             .foregroundStyle(Color(.textSecondary))
                     }
                     
+                    WeekStrip()
+                    
                     VStack(spacing: 8) {
                         ForEach($store.activities) { $activity in
                             if activity.isNow(at: nowMinutes) && !activity.isDone {
