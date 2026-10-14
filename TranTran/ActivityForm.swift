@@ -14,6 +14,13 @@ struct ActivityForm: View {
     @State private var startTime = Calendar.current.nextDate(after: .now, matching: DateComponents(minute: 0), matchingPolicy: .nextTime) ?? .now
     @State private var isPickingTime = false
     @State private var durationMinutes = 30
+    @State private var isPickingDuration = false
+    
+    private let durationPresets = [15, 30, 60, 120, 240]
+    
+    private var isCustomDuration: Bool {
+        !durationPresets.contains(durationMinutes)
+    }
     
     private var startText: String {
         startTime.formatted(.dateTime.hour().minute().locale(Locale(identifier: "it_IT")))
@@ -108,21 +115,40 @@ struct ActivityForm: View {
                                 .fontWeight(.heavy)
                                 .padding(.top, 14)
                             LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) {
-                                ForEach([15, 30, 60, 120, 240], id: \.self) { option in
+                                ForEach(durationPresets, id: \.self) { option in
                                     Button {
-                                        durationMinutes = option
+                                        withAnimation(.snappy) {
+                                            durationMinutes = option
+                                            isPickingDuration = false
+                                        }
                                     } label: {
                                         ChoiceChip(title: durationText(option), isSelected: durationMinutes == option)
                                     }
                                     .buttonStyle(.plain)
                                 }
                                 Button{
+                                    withAnimation(.snappy) {
+                                        isPickingDuration.toggle()
+                                    }
                                 } label: {
-                                    ChoiceChip(title: "Altro...", isSelected: false)
+                                    ChoiceChip(title: isCustomDuration ? durationText(durationMinutes) : "Altro...", isSelected: isCustomDuration)
                                 }
                                 .buttonStyle(.plain)
                             }
                             .padding(.top, 10)
+                            if isPickingDuration {
+                                Picker("Durata", selection: $durationMinutes) {
+                                    ForEach(Array(stride(from: 15, through: 720, by: 15)), id: \.self) { value in
+                                        Text(durationText(value))
+                                            .tag(value)
+                                    }
+                                }
+                                .labelsHidden()
+                                #if os(iOS)
+                                .pickerStyle(.wheel)
+                                #endif
+                                .frame(maxWidth: .infinity)
+                            }
                             Text("Finisce alle \(endText). In teoria.")
                                 .font(.footnote)
                                 .fontWeight(.bold)
