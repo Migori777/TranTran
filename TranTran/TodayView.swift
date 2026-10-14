@@ -57,12 +57,18 @@ struct TodayView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(dateText)
-                            .font(.footnote)
-                            .fontWeight(.heavy)
-                            .textCase(.uppercase)
-                            .kerning(0.8)
-                            .foregroundStyle(Color(.textSecondary))
+                        HStack(spacing: 12) {
+                            Text(dateText)
+                                .font(.footnote)
+                                .fontWeight(.heavy)
+                                .textCase(.uppercase)
+                                .kerning(0.8)
+                                .foregroundStyle(Color(.textSecondary))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.75)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            StreakPill(days: 4)
+                        }
                         Text(titleText)
                             .font(.title)
                             .fontWeight(.black)
