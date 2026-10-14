@@ -16,6 +16,7 @@ enum AppSection {
 struct ContentView: View {
     @State private var store = ActivityStore()
     @State private var selectedSection = AppSection.today
+    @State private var isAddingActivity = false
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedSection) {
@@ -36,12 +37,15 @@ struct ContentView: View {
             #if os(iOS)
             HStack(spacing: 10) {
                 TabBar(selection: $selectedSection)
-                AddButton()
+                AddButton(isAdding: $isAddingActivity)
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 26)
             .ignoresSafeArea(edges: .bottom)
             #endif
+        }
+        .sheet(isPresented: $isAddingActivity) {
+            ActivityForm()
         }
     }
 }

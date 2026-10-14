@@ -69,8 +69,10 @@ struct BarItem: View {
 }
 
 struct AddButton: View {
+    @Binding var isAdding: Bool
     var body: some View {
         Button {
+            isAdding = true
         } label: {
             Image(systemName: "plus")
                 .font(.title2)
@@ -106,7 +108,7 @@ extension View {
             .ignoresSafeArea()
         HStack(spacing: 10) {
             TabBar(selection: $selection)
-            AddButton()
+            AddButton(isAdding: .constant(false))
         }
         .padding(.horizontal, 20)        
     }
