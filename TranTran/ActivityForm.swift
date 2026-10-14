@@ -12,6 +12,7 @@ struct ActivityForm: View {
     @State private var title = ""
     @State private var note = ""
     @State private var startTime = Calendar.current.nextDate(after: .now, matching: DateComponents(minute: 0), matchingPolicy: .nextTime) ?? .now
+    @State private var isPickingTime = false
     
     private var startText: String {
         startTime.formatted(.dateTime.hour().minute().locale(Locale(identifier: "it_IT")))
@@ -58,16 +59,32 @@ struct ActivityForm: View {
                                     .font(.callout)
                                     .fontWeight(.heavy)
                                 Spacer()
-                                Text(startText)
-                                    .font(.body)
-                                    .fontWeight(.black)
-                                    .foregroundStyle(Color.accentColor)
-                                    .padding(.horizontal, 14)
-                                    .frame(height: 36)
-                                    .background(Color(.accentSoft))
-                                    .clipShape(.rect(cornerRadius: 12))
+                                Button {
+                                    withAnimation(.snappy) {
+                                        isPickingTime.toggle()
+                                    }
+                                } label: {
+                                    Text(startText)
+                                        .font(.body)
+                                        .fontWeight(.black)
+                                        .foregroundStyle(Color.accentColor)
+                                        .padding(.horizontal, 14)
+                                        .frame(height: 36)
+                                        .background(Color(.accentSoft))
+                                        .clipShape(.rect(cornerRadius: 12))
+                                }
+                                .buttonStyle(.plain)
                             }
                             .frame(height: 56)
+                            if isPickingTime {
+                                DatePicker("Inizio", selection: $startTime, displayedComponents: .hourAndMinute)
+                                    .labelsHidden()
+                                #if os(iOS)
+                                    .datePickerStyle(.wheel)
+                                #endif
+                                    .environment(\.locale, Locale(identifier: "it_IT"))
+                                    .frame(maxWidth: .infinity)
+                            }
                         }
                         .padding(.horizontal, 16)
                         .background(Color(.surface))
