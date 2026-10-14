@@ -86,6 +86,17 @@ struct AddButton: View {
     }
 }
 
+extension View {
+    func replacingSystemTabBar() -> some View {
+        #if os(iOS)
+        self
+            .toolbarVisibility(.hidden, for: .tabBar)
+        #else
+        self
+        #endif
+    }
+}
+
 #Preview {
     @Previewable @State var selection = AppSection.today
     ZStack(alignment: .bottom) {

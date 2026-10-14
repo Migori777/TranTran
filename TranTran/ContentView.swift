@@ -17,18 +17,32 @@ struct ContentView: View {
     @State private var store = ActivityStore()
     @State private var selectedSection = AppSection.today
     var body: some View {
-        TabView(selection: $selectedSection) {
-            Tab("Oggi", systemImage: "calendar", value: .today) {
-                TodayView(store: store)
+        ZStack(alignment: .bottom){
+            TabView(selection: $selectedSection) {
+                Tab("Oggi", systemImage: "calendar", value: .today) {
+                    TodayView(store: store)
+                        .replacingSystemTabBar()
+                }
+                Tab("Routine", systemImage: "repeat", value: .routine) {
+                    Text("Routine")
+                        .replacingSystemTabBar()
+                }
+                Tab("Bilancio", systemImage: "chart.bar", value: .balance) {
+                    Text("\(store.doneCount)")
+                        .replacingSystemTabBar()
+                }
             }
-            Tab("Routine", systemImage: "repeat", value: .routine) {
-                Text("Routine")
+            .tabViewStyle(.sidebarAdaptable)
+            #if os(iOS)
+            HStack(spacing: 10) {
+                TabBar(selection: $selectedSection)
+                AddButton()
             }
-            Tab("Bilancio", systemImage: "chart.bar", value: .balance) {
-                Text("\(store.doneCount)")
-            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 26)
+            .ignoresSafeArea(edges: .bottom)
+            #endif
         }
-        .tabViewStyle(.sidebarAdaptable)
     }
 }
 
