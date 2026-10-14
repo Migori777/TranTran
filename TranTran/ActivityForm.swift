@@ -15,6 +15,7 @@ struct ActivityForm: View {
     @State private var isPickingTime = false
     @State private var durationMinutes = 30
     @State private var isPickingDuration = false
+    @State private var color = ActivityColor.sun
     
     private let durationPresets = [15, 30, 60, 120, 240]
     
@@ -50,7 +51,7 @@ struct ActivityForm: View {
                             .fontWeight(.semibold)
                             .foregroundStyle(Color(.activityInk))
                             .frame(width: 56, height: 56)
-                            .background(Color(.activitySun))
+                            .background(color.fill)
                             .clipShape(.rect(cornerRadius: 19))
                         VStack(alignment: .leading, spacing: 4) {
                             TextField("Titolo", text: $title, prompt: Text("Cosa c'è da fare?").foregroundStyle(Color(.textSecondary)))
@@ -157,6 +158,42 @@ struct ActivityForm: View {
                         }
                         .padding(.horizontal, 16)
                         .padding(.bottom, 16)
+                        .background(Color(.surface))
+                        .clipShape(.rect(cornerRadius: 20))
+                    }
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Colore")
+                            .font(.caption)
+                            .fontWeight(.heavy)
+                            .textCase(.uppercase)
+                            .kerning(0.7)
+                            .foregroundStyle(Color(.textSecondary))
+                            .padding(.leading, 4)
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 6), spacing: 8) {
+                            ForEach(ActivityColor.allCases, id: \.self) { option in
+                                Button {
+                                    color = option
+                                } label: {
+                                    Circle()
+                                        .fill(option.fill)
+                                        .frame(width: 44, height: 44)
+                                        .overlay {
+                                            if color == option {
+                                                Image(systemName: "checkmark")
+                                                    .font(.caption)
+                                                    .fontWeight(.heavy)
+                                                    .foregroundStyle(Color(.activityInk))
+                                                Circle()
+                                                    .strokeBorder(Color.accentColor, lineWidth: 2.5)
+                                                    .frame(width: 44, height: 44)
+                                            }
+                                        }
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                        .padding(.vertical, 14)
+                        .padding(.horizontal, 16)
                         .background(Color(.surface))
                         .clipShape(.rect(cornerRadius: 20))
                     }
