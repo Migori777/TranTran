@@ -17,7 +17,7 @@ struct ContentView: View {
     @State private var store = ActivityStore()
     @State private var selectedSection = AppSection.today
     var body: some View {
-        ZStack(alignment: .bottom){
+        ZStack(alignment: .bottom) {
             TabView(selection: $selectedSection) {
                 Tab("Oggi", systemImage: "calendar", value: .today) {
                     TodayView(store: store)

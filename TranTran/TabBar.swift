@@ -91,6 +91,8 @@ extension View {
         #if os(iOS)
         self
             .toolbarVisibility(.hidden, for: .tabBar)
+            .safeAreaPadding(.bottom, 102)
+            .ignoresSafeArea(edges: .bottom)
         #else
         self
         #endif
