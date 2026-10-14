@@ -68,12 +68,33 @@ struct BarItem: View {
     }
 }
 
+struct AddButton: View {
+    var body: some View {
+        Button {
+        } label: {
+            Image(systemName: "plus")
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundStyle(Color(.onAccent))
+                .frame(width: 60, height: 60)
+                .contentShape(.circle)
+        }
+        .buttonStyle(.plain)
+        .glassEffect(.regular.tint(Color.accentColor).interactive(), in: .circle)
+        .shadow(color: Color.accentColor.opacity(0.34), radius: 13, y: 10)
+        .accessibilityLabel("Nuova attività")
+    }
+}
+
 #Preview {
     @Previewable @State var selection = AppSection.today
     ZStack(alignment: .bottom) {
         Color(.appBackground)
             .ignoresSafeArea()
-        TabBar(selection: $selection)
-            .padding(.horizontal, 20)
+        HStack(spacing: 10) {
+            TabBar(selection: $selection)
+            AddButton()
+        }
+        .padding(.horizontal, 20)        
     }
 }
