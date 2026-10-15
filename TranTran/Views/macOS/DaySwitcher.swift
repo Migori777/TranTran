@@ -32,7 +32,6 @@ struct DaySwitcher: View {
             }
             .buttonStyle(.plain)
             
-            //TODO: next day
             Button {
             } label: {
                 Image(systemName: "chevron.right")
