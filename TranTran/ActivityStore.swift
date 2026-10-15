@@ -23,4 +23,8 @@ class ActivityStore {
         activities.removeAll { item in item.id == activity.id }
         add(activity)
     }
+    
+    func delete(_ activity: Activity) {
+        activities.removeAll { item in item.id == activity.id }
+    }
 }

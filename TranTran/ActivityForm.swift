@@ -249,11 +249,33 @@ struct ActivityForm: View {
                         .background(Color(.surface))
                         .clipShape(.rect(cornerRadius: 20))
                     }
+                    if let activity {
+                        VStack(spacing: 8) {
+                            Button(role: .destructive) {
+                                store.delete(activity)
+                                dismiss()
+                            } label: {
+                                Text("Elimina attività")
+                                    .font(.callout)
+                                    .fontWeight(.heavy)
+                                    .foregroundStyle(Color(.danger))
+                                    .frame(maxWidth: .infinity, minHeight: 52)
+                                    .background(Color(.surface))
+                                    .clipShape(.rect(cornerRadius: 20))
+                            }
+                            .buttonStyle(.plain)
+                            Text("Nessuno lo saprà.")
+                                .font(.footnote)
+                                .fontWeight(.bold)
+                                .foregroundStyle(Color(.textSecondary))
+                        }
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .foregroundStyle(Color(.textPrimary))
                 .padding(.horizontal, 20)
                 .padding(.top, 16)
+                .padding(.bottom, 40)
             }
             .background(Color(.appBackground))
             .toolbar {
