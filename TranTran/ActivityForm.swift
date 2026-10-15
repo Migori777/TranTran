@@ -48,8 +48,20 @@ struct ActivityForm: View {
     private func save() {
         let hour = Calendar.current.component(.hour, from: startTime)
         let minute = Calendar.current.component(.minute, from: startTime)
-        let newActivity = Activity(title: title, note: note, hour: hour, minute: minute, durationMinutes: durationMinutes, symbol: symbol, color: color)
-        store.add(newActivity)
+        if let activity {
+            var changed = activity
+            changed.title = title
+            changed.note = note
+            changed.hour = hour
+            changed.minute = minute
+            changed.durationMinutes = durationMinutes
+            changed.symbol = symbol
+            changed.color = color
+            store.update(changed)
+        } else {
+            let newActivity = Activity(title: title, note: note, hour: hour, minute: minute, durationMinutes: durationMinutes, symbol: symbol, color: color)
+            store.add(newActivity)
+        }
         dismiss()
     }
     

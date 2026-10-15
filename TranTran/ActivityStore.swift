@@ -18,4 +18,9 @@ class ActivityStore {
         activities.append(activity)
         activities.sort {first, second in first.startMinutes < second.startMinutes}
     }
+    
+    func update(_ activity: Activity) {
+        activities.removeAll { item in item.id == activity.id }
+        add(activity)
+    }
 }
