@@ -88,10 +88,17 @@ struct TodayView: View {
                     VStack(spacing: 8) {
                         ForEach($store.activities) { $activity in
                             if activity.isNow(at: nowMinutes) && !activity.isDone {
+                                #if os(macOS)
+                                MacNowRow(activity: $activity, nowMinutes: nowMinutes)
+                                    .onTapGesture {
+                                        editingActivity = activity
+                                    }
+                                #else
                                 NowCard(activity: $activity, nowMinutes: nowMinutes)
                                     .onTapGesture {
                                         editingActivity = activity
                                     }
+                                #endif
                             } else {
                                 #if os(macOS)
                                 MacActivityRow(activity: $activity)
