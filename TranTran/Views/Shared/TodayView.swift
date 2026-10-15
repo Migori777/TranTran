@@ -115,8 +115,15 @@ struct TodayView: View {
                         }
                     }
                 }
+                #if os(macOS)
+                .padding(.top, 26)
+                .padding(.leading, 20)
+                .padding(.trailing, 28)
+                .padding(.bottom, 28)
+                #else
                 .padding(.horizontal, 20)
                 .padding(.top, 8)
+                #endif
             }
             .background(Color(.appBackground))
             .foregroundStyle(Color(.textPrimary))
