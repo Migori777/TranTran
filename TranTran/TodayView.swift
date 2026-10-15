@@ -9,6 +9,7 @@ import SwiftUI
 
 struct TodayView: View {
     @Bindable var store: ActivityStore
+    @Binding var isAdding: Bool
     @State private var selectedDate = Date.now
     @State private var editingActivity: Activity?
     
@@ -57,26 +58,31 @@ struct TodayView: View {
         TimelineView(.everyMinute) { _ in
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack(spacing: 12) {
-                            Text(dateText)
-                                .font(.footnote)
-                                .fontWeight(.heavy)
-                                .textCase(.uppercase)
-                                .kerning(0.8)
+                    HStack(alignment: .bottom, spacing: 14) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack(spacing: 12) {
+                                Text(dateText)
+                                    .font(.footnote)
+                                    .fontWeight(.heavy)
+                                    .textCase(.uppercase)
+                                    .kerning(0.8)
+                                    .foregroundStyle(Color(.textSecondary))
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.75)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                StreakPill(days: 4)
+                            }
+                            Text(titleText)
+                                .font(.title)
+                                .fontWeight(.black)
+                            Text(summaryText)
+                                .font(.subheadline)
+                                .fontWeight(.bold)
                                 .foregroundStyle(Color(.textSecondary))
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.75)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            StreakPill(days: 4)
                         }
-                        Text(titleText)
-                            .font(.title)
-                            .fontWeight(.black)
-                        Text(summaryText)
-                            .font(.subheadline)
-                            .fontWeight(.bold)
-                            .foregroundStyle(Color(.textSecondary))
+                        #if os(macOS)
+                        NewActivityButton(isAdding: $isAdding)
+                        #endif
                     }
                     
                     WeekStrip(today: today, selectedDate: $selectedDate)
@@ -110,6 +116,31 @@ struct TodayView: View {
     }
 }
 
+struct NewActivityButton: View {
+    @Binding var isAdding: Bool
+    
+    var body: some View {
+        Button {
+            isAdding = true
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: "plus")
+                Text("Nuova attività")
+            }
+            .font(.title3)
+            .fontWeight(.heavy)
+            .foregroundStyle(Color(.onAccent))
+            .padding(.leading, 12)
+            .padding(.trailing, 16)
+            .frame(height: 40)
+            .contentShape(.capsule)
+        }
+        .buttonStyle(.plain)
+        .glassEffect(.regular.tint(Color.accentColor).interactive(), in: .capsule)
+        .shadow(color: Color.accentColor.opacity(0.34), radius: 9, y: 6)
+    }
+}
+
 #Preview {
-    TodayView(store: ActivityStore())
+    TodayView(store: ActivityStore(), isAdding: .constant(false))
 }

@@ -21,7 +21,7 @@ struct ContentView: View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedSection) {
                 Tab("Oggi", systemImage: "calendar", value: .today) {
-                    TodayView(store: store)
+                    TodayView(store: store, isAdding: $isAddingActivity)
                         .replacingSystemTabBar()
                 }
                 Tab("Routine", systemImage: "repeat", value: .routine) {
