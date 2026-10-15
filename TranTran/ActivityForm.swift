@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ActivityForm: View {
+    let store: ActivityStore
     @Environment(\.dismiss) private var dismiss
     @State private var title = ""
     @State private var note = ""
@@ -41,6 +42,14 @@ struct ActivityForm: View {
             return "\(minutes / 60) h"
         }
         return "\(minutes / 60) h \(minutes % 60)"
+    }
+    
+    private func save() {
+        let hour = Calendar.current.component(.hour, from: startTime)
+        let minute = Calendar.current.component(.minute, from: startTime)
+        let newActivity = Activity(title: title, note: note, hour: hour, minute: minute, durationMinutes: durationMinutes, symbol: symbol, color: color)
+        store.add(newActivity)
+        dismiss()
     }
     
     var body: some View {
@@ -247,7 +256,7 @@ struct ActivityForm: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(role: .confirm) {
-                        dismiss()
+                        save()
                     }
                     .disabled(title.isEmpty)
                 }
@@ -274,5 +283,5 @@ struct ChoiceChip: View {
 }
 
 #Preview {
-    ActivityForm()
+    ActivityForm(store: ActivityStore())
 }

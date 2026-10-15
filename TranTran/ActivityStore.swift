@@ -13,4 +13,9 @@ class ActivityStore {
     var doneCount: Int {
         activities.filter{ activity in activity.isDone }.count
     }
+    
+    func add(_ activity: Activity) {
+        activities.append(activity)
+        activities.sort {first, second in first.startMinutes < second.startMinutes}
+    }
 }

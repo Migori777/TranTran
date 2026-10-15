@@ -45,7 +45,7 @@ struct ContentView: View {
             #endif
         }
         .sheet(isPresented: $isAddingActivity) {
-            ActivityForm()
+            ActivityForm(store: store)
         }
     }
 }
