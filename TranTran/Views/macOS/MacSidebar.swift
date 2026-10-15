@@ -58,6 +58,7 @@ struct MacSidebar: View {
             .buttonStyle(.plain)
             
             Spacer()
+            StreakCard(days: 4)
         }
         .padding(.top, 44)
         .padding(.horizontal, 10)
