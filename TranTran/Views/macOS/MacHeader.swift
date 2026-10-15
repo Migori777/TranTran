@@ -32,7 +32,10 @@ struct MacHeader: View {
                     .foregroundStyle(Color(.textSecondary))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            NewActivityButton(isAdding: $isAdding)
+            HStack(spacing: 8) {
+                DaySwitcher()
+                NewActivityButton(isAdding: $isAdding)
+            }
         }
     }
 }
