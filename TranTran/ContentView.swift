@@ -40,6 +40,7 @@ struct ContentView: View {
         }
         .toolbar(removing: .title)
         .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+        .windowToolbarFullScreenVisibility(.onHover)
         .sheet(isPresented: $isAddingActivity) {
             ActivityForm(store: store)
         }

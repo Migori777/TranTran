@@ -20,7 +20,6 @@ struct MacHeader: View {
                     .font(.system(size: 13))
                     .fontWeight(.heavy)
                     .textCase(.uppercase)
-                
                     .kerning(0.8)
                     .foregroundStyle(Color(.textSecondary))
                 Text(titleText)
