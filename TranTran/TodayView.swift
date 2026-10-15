@@ -93,10 +93,17 @@ struct TodayView: View {
                                         editingActivity = activity
                                     }
                             } else {
+                                #if os(macOS)
+                                MacActivityRow(activity: $activity)
+                                    .onTapGesture {
+                                        editingActivity = activity
+                                    }
+                                #else
                                 ActivityRow(activity: $activity)
                                     .onTapGesture {
                                         editingActivity = activity
                                     }
+                                #endif
                             }
                         }
                     }
