@@ -27,6 +27,10 @@ struct ActivityForm: View {
         !durationPresets.contains(durationMinutes)
     }
     
+    private var formTitle: String {
+        activity == nil ? "Nuova attività" : "Modifica attività"
+    }
+    
     private var startText: String {
         startTime.formatted(.dateTime.hour().minute().locale(Locale(identifier: "it_IT")))
     }
@@ -86,6 +90,7 @@ struct ActivityForm: View {
                                 .fontWeight(.bold)
                                 .foregroundStyle(Color(.textSecondary))
                         }
+                        .textFieldStyle(.plain)
                     }
                     .padding(.vertical, 14)
                     .padding(.leading, 14)
@@ -278,19 +283,22 @@ struct ActivityForm: View {
                 .padding(.bottom, 40)
             }
             .background(Color(.appBackground))
+            #if os(macOS)
+            .navigationTitle(formTitle)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(role: .close){
+                    Button("Annulla", systemImage: "xmark", role: .close){
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .principal) {
-                    Text(activity == nil ? "Nuova attività" : "Modifica attività")
+                    Text(formTitle)
                         .font(.headline)
                         .fontWeight(.heavy)
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(role: .confirm) {
+                    Button(activity == nil ? "Aggiungi" : "Salva", systemImage: "checkmark", role: .confirm) {
                         save()
                     }
                     .disabled(title.isEmpty)
