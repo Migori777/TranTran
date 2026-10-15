@@ -17,7 +17,6 @@ struct ContentView: View {
     @State private var store = ActivityStore()
     @State private var selectedSection = AppSection.today
     @State private var isAddingActivity = false
-    @State private var isShowingSplash = true
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedSection) {
@@ -47,12 +46,6 @@ struct ContentView: View {
         }
         .sheet(isPresented: $isAddingActivity) {
             ActivityForm(store: store)
-        }
-        .overlay {
-            if isShowingSplash {
-                SplashView(isShowing: $isShowingSplash)
-                    .transition(.opacity)
-            }
         }
     }
 }
