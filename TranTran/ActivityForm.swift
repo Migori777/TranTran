@@ -16,8 +16,10 @@ struct ActivityForm: View {
     @State private var durationMinutes = 30
     @State private var isPickingDuration = false
     @State private var color = ActivityColor.sun
+    @State private var symbol = "alarm"
     
     private let durationPresets = [15, 30, 60, 120, 240]
+    private let symbolChoices = ["alarm", "cup.and.saucer", "laptopcomputer", "video", "fork.knife", "dumbbell", "book.closed", "moon", "cart", "leaf", "heart", "music.note"]
     
     private var isCustomDuration: Bool {
         !durationPresets.contains(durationMinutes)
@@ -46,7 +48,7 @@ struct ActivityForm: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20){
                     HStack(spacing: 14) {
-                        Image(systemName: "alarm")
+                        Image(systemName: symbol)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .foregroundStyle(Color(.activityInk))
@@ -194,6 +196,34 @@ struct ActivityForm: View {
                         }
                         .padding(.vertical, 14)
                         .padding(.horizontal, 16)
+                        .background(Color(.surface))
+                        .clipShape(.rect(cornerRadius: 20))
+                    }
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Icona")
+                            .font(.caption)
+                            .fontWeight(.heavy)
+                            .textCase(.uppercase)
+                            .kerning(0.7)
+                            .foregroundStyle(Color(.textSecondary))
+                            .padding(.leading, 4)
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 6), spacing: 8) {
+                            ForEach(symbolChoices, id: \.self) { option in
+                                Button {
+                                    symbol = option
+                                } label : {
+                                    Image(systemName: option)
+                                        .font(.title3)
+                                        .fontWeight(.semibold)
+                                        .foregroundStyle(symbol == option ? Color(.activityInk) : Color(.textPrimary))
+                                        .frame(maxWidth: .infinity, minHeight: 46)
+                                        .background(symbol == option ? color.fill : Color(.textPrimary).opacity(0.08))
+                                        .clipShape(.rect(cornerRadius: 15))
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                        .padding(14)
                         .background(Color(.surface))
                         .clipShape(.rect(cornerRadius: 20))
                     }
