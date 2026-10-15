@@ -58,35 +58,33 @@ struct TodayView: View {
         TimelineView(.everyMinute) { _ in
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
-                    HStack(alignment: .bottom, spacing: 14) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            HStack(spacing: 12) {
-                                Text(dateText)
-                                    .font(.footnote)
-                                    .fontWeight(.heavy)
-                                    .textCase(.uppercase)
-                                    .kerning(0.8)
-                                    .foregroundStyle(Color(.textSecondary))
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.75)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                StreakPill(days: 4)
-                            }
-                            Text(titleText)
-                                .font(.title)
-                                .fontWeight(.black)
-                            Text(summaryText)
-                                .font(.subheadline)
-                                .fontWeight(.bold)
+                    #if os(macOS)
+                    MacHeader(dateText: dateText, titleText: titleText, summaryText: summaryText, isAdding: $isAdding)
+                    #else
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack(spacing: 12) {
+                            Text(dateText)
+                                .font(.footnote)
+                                .fontWeight(.heavy)
+                                .textCase(.uppercase)
+                                .kerning(0.8)
                                 .foregroundStyle(Color(.textSecondary))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.75)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            StreakPill(days: 4)
                         }
-                        #if os(macOS)
-                        NewActivityButton(isAdding: $isAdding)
-                        #endif
+                        Text(titleText)
+                            .font(.title)
+                            .fontWeight(.black)
+                        Text(summaryText)
+                            .font(.subheadline)
+                            .fontWeight(.bold)
+                            .foregroundStyle(Color(.textSecondary))
                     }
-                    
                     WeekStrip(today: today, selectedDate: $selectedDate)
-                    
+                    #endif
+
                     VStack(spacing: 8) {
                         ForEach($store.activities) { $activity in
                             if activity.isNow(at: nowMinutes) && !activity.isDone {
