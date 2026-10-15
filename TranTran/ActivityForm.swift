@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ActivityForm: View {
     let store: ActivityStore
+    var activity: Activity? = nil
     @Environment(\.dismiss) private var dismiss
     @State private var title = ""
     @State private var note = ""
@@ -250,7 +251,7 @@ struct ActivityForm: View {
                     }
                 }
                 ToolbarItem(placement: .principal) {
-                    Text("Nuova attività")
+                    Text(activity == nil ? "Nuova attività" : "Modifica attività")
                         .font(.headline)
                         .fontWeight(.heavy)
                 }
@@ -264,6 +265,16 @@ struct ActivityForm: View {
         }
         .presentationDragIndicator(.visible)
         .fontDesign(.rounded)
+        .onAppear {
+            if let activity {
+                title = activity.title
+                note = activity.note
+                startTime = Calendar.current.date(bySettingHour: activity.hour, minute: activity.minute, second: 0, of: .now) ?? startTime
+                durationMinutes = activity.durationMinutes
+                color = activity.color
+                symbol = activity.symbol
+            }
+        }
     }
 }
 
@@ -282,6 +293,10 @@ struct ChoiceChip: View {
     }
 }
 
-#Preview {
+#Preview("Nuova") {
     ActivityForm(store: ActivityStore())
+}
+
+#Preview("Modifica") {
+    ActivityForm(store: ActivityStore(), activity: Activity.samples[1])
 }

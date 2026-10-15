@@ -10,6 +10,7 @@ import SwiftUI
 struct TodayView: View {
     @Bindable var store: ActivityStore
     @State private var selectedDate = Date.now
+    @State private var editingActivity: Activity?
     
     private var today: Date {
         Date.now
@@ -84,8 +85,14 @@ struct TodayView: View {
                         ForEach($store.activities) { $activity in
                             if activity.isNow(at: nowMinutes) && !activity.isDone {
                                 NowCard(activity: $activity, nowMinutes: nowMinutes)
+                                    .onTapGesture {
+                                        editingActivity = activity
+                                    }
                             } else {
                                 ActivityRow(activity: $activity)
+                                    .onTapGesture {
+                                        editingActivity = activity
+                                    }
                             }
                         }
                     }
@@ -96,6 +103,9 @@ struct TodayView: View {
             .background(Color(.appBackground))
             .foregroundStyle(Color(.textPrimary))
             .fontDesign(.rounded)
+        }
+        .sheet(item: $editingActivity) { chosen in
+            ActivityForm(store: store, activity: chosen)
         }
     }
 }
