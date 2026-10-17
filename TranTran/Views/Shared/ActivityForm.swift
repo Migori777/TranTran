@@ -10,6 +10,8 @@ import SwiftUI
 struct ActivityForm: View {
     let store: ActivityStore
     var activity: Activity? = nil
+    var isPanel = false
+    var onClose: () -> Void = {}
     @Environment(\.dismiss) private var dismiss
     @State private var title = ""
     @State private var note = ""
@@ -70,6 +72,79 @@ struct ActivityForm: View {
     }
     
     var body: some View {
+        Group {
+            if isPanel {
+                panelBody
+            } else {
+                sheetBody
+            }
+        }
+        .fontDesign(.rounded)
+        .onAppear {
+            if let activity {
+                title = activity.title
+                note = activity.note
+                startTime = Calendar.current.date(bySettingHour: activity.hour, minute: activity.minute, second: 0, of: .now) ?? startTime
+                durationMinutes = activity.durationMinutes
+                color = activity.color
+                symbol = activity.symbol
+            }
+        }
+    }
+    
+    private var panelBody: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Text(formTitle)
+                    .font(.system(size: 12))
+                    .fontWeight(.heavy)
+                    .textCase(.uppercase)
+                    .kerning(0.7)
+                    .foregroundStyle(Color(.textSecondary))
+                Spacer()
+                Button {
+                    onClose()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 8))
+                        .fontWeight(.heavy)
+                        .frame(width: 26, height: 26)
+                        .background(Color(.textPrimary).opacity(0.08))
+                        .clipShape(.circle)
+                }
+                .buttonStyle(.plain)
+                .keyboardShortcut(.cancelAction)
+                .accessibilityLabel("Chiudi")
+            }
+            
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 12) {
+                    Image(systemName: symbol)
+                        .font(.system(size: 20))
+                        .fontWeight(.semibold)
+                        .foregroundStyle(Color(.activityInk))
+                        .frame(width: 44, height: 44)
+                        .background(color.fill)
+                        .clipShape(.rect(cornerRadius: 15))
+                    TextField("Titolo", text: $title, prompt: Text("Cosa c'è da fare?").foregroundStyle(Color(.textSecondary)))
+                        .font(.system(size: 19))
+                        .fontWeight(.black)
+                }
+                TextField("Battuta", text: $note, prompt: Text("Una battuta, per convincerti").foregroundStyle(Color(.textSecondary)))
+                    .font(.system(size: 14))
+                    .fontWeight(.bold)
+                    .foregroundStyle(Color(.textSecondary))
+            }
+            .textFieldStyle(.plain)
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.surface))
+        .clipShape(.rect(cornerRadius: 24))
+    }
+    
+    
+    private var sheetBody: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20){
@@ -306,17 +381,6 @@ struct ActivityForm: View {
             }
         }
         .presentationDragIndicator(.visible)
-        .fontDesign(.rounded)
-        .onAppear {
-            if let activity {
-                title = activity.title
-                note = activity.note
-                startTime = Calendar.current.date(bySettingHour: activity.hour, minute: activity.minute, second: 0, of: .now) ?? startTime
-                durationMinutes = activity.durationMinutes
-                color = activity.color
-                symbol = activity.symbol
-            }
-        }
     }
 }
 
@@ -341,4 +405,12 @@ struct ChoiceChip: View {
 
 #Preview("Modifica") {
     ActivityForm(store: ActivityStore(), activity: Activity.samples[1])
+}
+
+#Preview("Pannello") {
+    ActivityForm(store: ActivityStore(), activity: Activity.samples[2], isPanel: true)
+        .padding(20)
+        .frame(width: 320)
+        .background(Color(.appBackground))
+        .foregroundStyle(Color(.textPrimary))
 }

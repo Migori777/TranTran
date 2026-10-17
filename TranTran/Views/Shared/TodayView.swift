@@ -138,7 +138,10 @@ struct TodayView: View {
     
     private var sideColumn: some View {
         VStack(spacing: 16) {
-            if let index = nowIndex {
+            if let chosen = editingActivity {
+                ActivityForm(store: store, activity: chosen, isPanel: true, onClose: { editingActivity = nil })
+                    .id(chosen.id)
+            } else if let index = nowIndex {
                 NowSummaryCard(activity: $store.activities[index], label: "In corso")
             } else if let index = nextIndex{
                 NowSummaryCard(activity: $store.activities[index], label: "Prossima")
