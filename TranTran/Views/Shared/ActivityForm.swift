@@ -23,6 +23,7 @@ struct ActivityForm: View {
     @State private var symbol = "alarm"
     
     private let durationPresets = [15, 30, 60, 120, 240]
+    private let panelDurations = [15, 30, 45, 60, 90, 120, 180, 240, 300, 360, 480, 600, 720]
     private let symbolChoices = ["alarm", "cup.and.saucer", "laptopcomputer", "video", "fork.knife", "dumbbell", "book.closed", "moon", "cart", "leaf", "heart", "music.note"]
     
     private var isCustomDuration: Bool {
@@ -49,6 +50,10 @@ struct ActivityForm: View {
             return "\(minutes / 60) h"
         }
         return "\(minutes / 60) h \(minutes % 60)"
+    }
+    
+    private func moveStart(by minutes: Int) {
+        startTime = Calendar.current.date(byAdding: .minute, value: minutes, to: startTime) ?? startTime
     }
     
     private func save() {
@@ -136,6 +141,100 @@ struct ActivityForm: View {
                     .foregroundStyle(Color(.textSecondary))
             }
             .textFieldStyle(.plain)
+            
+            VStack(alignment: .leading, spacing: 0) {
+                Rectangle()
+                    .fill(Color(.textPrimary).opacity(0.08))
+                    .frame(height: 1)
+                HStack {
+                    Text("Inizio")
+                        .fontWeight(.bold)
+                        .foregroundStyle(Color(.textSecondary))
+                    Spacer()
+                    HStack(spacing: 4) {
+                        Text(startText)
+                            .fontWeight(.black)
+                            .foregroundStyle(Color.accentColor)
+                            .padding(.horizontal, 12)
+                            .frame(height: 28)
+                            .background(Color(.accentSoft))
+                            .clipShape(.rect(cornerRadius: 10))
+                        VStack(spacing: 0) {
+                            Button {
+                                moveStart(by: 15)
+                            } label: {
+                                Image(systemName: "chevron.up")
+                                    .font(.system(size: 7))
+                                    .fontWeight(.heavy)
+                                    .frame(width: 20, height: 14)
+                                    .contentShape(.rect)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("Un quarto d'ora più tardi")
+                            Button {
+                                moveStart(by: -15)
+                            } label: {
+                                Image(systemName: "chevron.down")
+                                    .font(.system(size: 7))
+                                    .fontWeight(.heavy)
+                                    .frame(width: 20, height: 14)
+                                    .contentShape(.rect)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("Un quarto d'ora prima")
+                        }
+                        .background(Color(.textPrimary).opacity(0.08))
+                        .clipShape(.rect(cornerRadius: 10))
+                    }
+                }
+                .padding(.vertical, 8)
+                Rectangle()
+                    .fill(Color(.textPrimary).opacity(0.08))
+                    .frame(height: 1)
+                HStack {
+                    Text("Durata")
+                        .fontWeight(.bold)
+                        .foregroundStyle(Color(.textSecondary))
+                    Spacer()
+                    Menu {
+                        Picker("Durata", selection: $durationMinutes) {
+                            ForEach(panelDurations, id: \.self) { value in
+                                Text(durationText(value))
+                                    .tag(value)
+                            }
+                        }
+                        .pickerStyle(.inline)
+                        .labelsHidden()
+                    } label: {
+                        HStack(spacing: 6) {
+                            Text(durationText(durationMinutes))
+                                .fontWeight(.heavy)
+                            Image(systemName: "chevron.up.chevron.down")
+                                .font(.system(size: 8))
+                                .fontWeight(.heavy)
+                        }
+                        .padding(.leading, 12)
+                        .padding(.trailing, 10)
+                        .frame(height: 28)
+                        .background(Color(.textPrimary).opacity(0.08))
+                        .clipShape(.capsule)
+                    }
+                    .menuStyle(.button)
+                    .buttonStyle(.plain)
+                    .menuIndicator(.hidden)
+                    .fixedSize()
+                }
+                .padding(.vertical, 8)
+                Rectangle()
+                    .fill(Color(.textPrimary).opacity(0.08))
+                    .frame(height: 1)
+                Text("Finisce alle \(endText). In teoria.")
+                    .font(.system(size: 13))
+                    .fontWeight(.bold)
+                    .foregroundStyle(Color(.textSecondary))
+                    .padding(.top, 8)
+            }
+            .font(.system(size: 14))
         }
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
