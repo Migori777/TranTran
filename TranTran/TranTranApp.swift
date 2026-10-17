@@ -22,5 +22,8 @@ struct TranTranApp: App {
                 }
                 .animation(.easeOut(duration: 0.35), value: isShowingSplash)
         }
+        #if os(macOS)
+        .defaultSize(width: 1280, height:800)
+        #endif
     }
 }

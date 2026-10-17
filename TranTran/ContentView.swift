@@ -33,6 +33,7 @@ struct ContentView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
+        .frame(minWidth: 1220, minHeight: 600)
         .background(Color(.appBackground))
         .ignoresSafeArea()
         .toolbar {
