@@ -9,6 +9,7 @@ import SwiftUI
 
 struct NowSummaryCard: View {
     @Binding var activity: Activity
+    let label: String
     
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -21,7 +22,7 @@ struct NowSummaryCard: View {
                     .background(activity.color.fill)
                     .clipShape(.rect(cornerRadius: 15))
                 VStack(alignment: .leading, spacing: 1) {
-                    Text("In corso")
+                    Text(label)
                         .font(.system(size: 12))
                         .fontWeight(.heavy)
                         .textCase(.uppercase)
@@ -85,11 +86,33 @@ struct NowSummaryCard: View {
     }
 }
 
+struct DayDoneCard: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Per oggi è tutto.")
+                .font(.system(size: 19))
+                .fontWeight(.black)
+            Text("Niente in programma. Goditela.")
+                .font(.system(size: 14))
+                .fontWeight(.bold)
+                .foregroundStyle(Color(.textSecondary))
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.surface))
+        .clipShape(.rect(cornerRadius: 24))
+    }
+}
+
 #Preview {
-    NowSummaryCard(activity: .constant(Activity.samples[1]))
-            .padding(20)
-            .frame(width: 320)
-            .background(Color(.appBackground))
-            .foregroundStyle(Color(.textPrimary))
-            .fontDesign(.rounded)
+    VStack(spacing: 16) {
+        NowSummaryCard(activity: .constant(Activity.samples[1]), label: "In corso")
+        NowSummaryCard(activity: .constant(Activity.samples[2]), label: "Prossima")
+        DayDoneCard()
+    }
+    .padding(20)
+    .frame(width: 320)
+    .background(Color(.appBackground))
+    .foregroundStyle(Color(.textPrimary))
+    .fontDesign(.rounded)
 }

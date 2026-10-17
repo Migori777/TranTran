@@ -60,6 +60,12 @@ struct TodayView: View {
         }
     }
     
+    private var nextIndex: Int? {
+        store.activities.firstIndex { activity in
+            activity.startMinutes > nowMinutes && !activity.isDone
+        }
+    }
+    
     private var listColumn: some View {
         VStack(alignment: .leading, spacing: 16) {
             #if os(macOS)
@@ -124,7 +130,11 @@ struct TodayView: View {
     private var sideColumn: some View {
         VStack(spacing: 16) {
             if let index = nowIndex {
-                NowSummaryCard(activity: $store.activities[index])
+                NowSummaryCard(activity: $store.activities[index], label: "In corso")
+            } else if let index = nextIndex{
+                NowSummaryCard(activity: $store.activities[index], label: "Prossima")
+            } else {
+                DayDoneCard()
             }
         }
     }
