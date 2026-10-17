@@ -54,81 +54,111 @@ struct TodayView: View {
         return "\(store.doneCount) \(word) su \(store.activities.count). Il resto è ottimismo."
     }
     
-    var body: some View {
-        TimelineView(.everyMinute) { _ in
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    #if os(macOS)
-                    MacHeader(dateText: dateText, titleText: titleText, summaryText: summaryText, isAdding: $isAdding)
-                    #else
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack(spacing: 12) {
-                            Text(dateText)
-                                .font(.footnote)
-                                .fontWeight(.heavy)
-                                .textCase(.uppercase)
-                                .kerning(0.8)
-                                .foregroundStyle(Color(.textSecondary))
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.75)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            StreakPill(days: 4)
-                        }
-                        Text(titleText)
-                            .font(.title)
-                            .fontWeight(.black)
-                        Text(summaryText)
-                            .font(.subheadline)
-                            .fontWeight(.bold)
-                            .foregroundStyle(Color(.textSecondary))
-                    }
-                    WeekStrip(today: today, selectedDate: $selectedDate)
-                    #endif
+    private var nowIndex: Int? {
+        store.activities.firstIndex { activity in
+            activity.isNow(at: nowMinutes) && !activity.isDone
+        }
+    }
+    
+    private var listColumn: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            #if os(macOS)
+            MacHeader(dateText: dateText, titleText: titleText, summaryText: summaryText, isAdding: $isAdding)
+            #else
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 12) {
+                    Text(dateText)
+                        .font(.footnote)
+                        .fontWeight(.heavy)
+                        .textCase(.uppercase)
+                        .kerning(0.8)
+                        .foregroundStyle(Color(.textSecondary))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.75)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    StreakPill(days: 4)
+                }
+                Text(titleText)
+                    .font(.title)
+                    .fontWeight(.black)
+                Text(summaryText)
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                    .foregroundStyle(Color(.textSecondary))
+            }
+            WeekStrip(today: today, selectedDate: $selectedDate)
+            #endif
 
-                    VStack(spacing: 8) {
-                        ForEach($store.activities) { $activity in
-                            if activity.isNow(at: nowMinutes) && !activity.isDone {
-                                #if os(macOS)
-                                MacNowRow(activity: $activity, nowMinutes: nowMinutes)
-                                    .onTapGesture {
-                                        editingActivity = activity
-                                    }
-                                #else
-                                NowCard(activity: $activity, nowMinutes: nowMinutes)
-                                    .onTapGesture {
-                                        editingActivity = activity
-                                    }
-                                #endif
-                            } else {
-                                #if os(macOS)
-                                MacActivityRow(activity: $activity)
-                                    .onTapGesture {
-                                        editingActivity = activity
-                                    }
-                                #else
-                                ActivityRow(activity: $activity)
-                                    .onTapGesture {
-                                        editingActivity = activity
-                                    }
-                                #endif
+            VStack(spacing: 8) {
+                ForEach($store.activities) { $activity in
+                    if activity.isNow(at: nowMinutes) && !activity.isDone {
+                        #if os(macOS)
+                        MacNowRow(activity: $activity, nowMinutes: nowMinutes)
+                            .onTapGesture {
+                                editingActivity = activity
                             }
-                        }
+                        #else
+                        NowCard(activity: $activity, nowMinutes: nowMinutes)
+                            .onTapGesture {
+                                editingActivity = activity
+                            }
+                        #endif
+                    } else {
+                        #if os(macOS)
+                        MacActivityRow(activity: $activity)
+                            .onTapGesture {
+                                editingActivity = activity
+                            }
+                        #else
+                        ActivityRow(activity: $activity)
+                            .onTapGesture {
+                                editingActivity = activity
+                            }
+                        #endif
                     }
                 }
-                #if os(macOS)
-                .padding(.top, 26)
-                .padding(.leading, 20)
-                .padding(.trailing, 28)
-                .padding(.bottom, 28)
-                #else
-                .padding(.horizontal, 20)
-                .padding(.top, 8)
-                #endif
             }
-            .background(Color(.appBackground))
-            .foregroundStyle(Color(.textPrimary))
-            .fontDesign(.rounded)
         }
+    }
+    
+    private var sideColumn: some View {
+        VStack(spacing: 16) {
+            if let index = nowIndex {
+                NowSummaryCard(activity: $store.activities[index])
+            }
+        }
+    }
+    
+    var body: some View {
+        TimelineView(.everyMinute) { _ in
+            #if os(macOS)
+            HStack(spacing: 0) {
+                ScrollView {
+                    listColumn
+                        .padding(.top, 26)
+                        .padding(.leading, 20)
+                        .padding(.trailing, 24)
+                        .padding(.bottom, 28)
+                }
+                ScrollView {
+                    sideColumn
+                        .padding(.top, 26)
+                        .padding(.trailing, 28)
+                        .padding(.bottom, 28)
+                }
+                .frame(width: 308)
+            }
+            #else
+            ScrollView {
+                listColumn
+                    .padding(.horizontal, 20)
+                    .padding(.top, 8)
+            }
+            #endif
+        }
+        .background(Color(.appBackground))
+        .foregroundStyle(Color(.textPrimary))
+        .fontDesign(.rounded)
         .sheet(item: $editingActivity) { chosen in
             ActivityForm(store: store, activity: chosen)
         }
