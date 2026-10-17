@@ -10,12 +10,14 @@ import SwiftUI
 struct MacNowRow: View {
     @Binding var activity: Activity
     let nowMinutes: Int
+    let isSelected: Bool
     
     var body: some View {
         HStack(spacing: 12) {
             Text(activity.timeText)
                 .font(.system(size: 14))
                 .fontWeight(.black)
+                .foregroundStyle(isSelected ? Color.accentColor : Color(.textPrimary))
                 .frame(width: 48, alignment: .trailing)
             nowCard
         }
@@ -67,6 +69,12 @@ struct MacNowRow: View {
         .foregroundStyle(Color(.activityInk))
         .background(activity.color.fill)
         .clipShape(.rect(cornerRadius: 24))
+        .overlay {
+            if isSelected {
+                RoundedRectangle(cornerRadius: 24)
+                    .strokeBorder(Color.accentColor, lineWidth: 2.5)
+            }
+        }
     }
     
     private var progressBar: some View {
@@ -85,7 +93,7 @@ struct MacNowRow: View {
 }
 
 #Preview {
-    MacNowRow(activity: .constant(Activity.samples[1]), nowMinutes: 11 * 60 + 20)
+    MacNowRow(activity: .constant(Activity.samples[1]), nowMinutes: 11 * 60 + 20, isSelected: true)
         .padding(20)
         .frame(width: 640)
         .background(Color(.appBackground))

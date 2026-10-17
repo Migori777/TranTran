@@ -9,13 +9,14 @@ import SwiftUI
 
 struct MacActivityRow: View {
     @Binding var activity: Activity
+    let isSelected: Bool
     
     var body: some View {
         HStack(spacing: 12) {
             Text(activity.timeText)
                 .font(.system(size: 14))
-                .fontWeight(.heavy)
-                .foregroundStyle(Color(.textSecondary))
+                .fontWeight(isSelected ? .black : .heavy)
+                .foregroundStyle(isSelected ? Color.accentColor : Color(.textSecondary))
                 .frame(width: 48, alignment: .trailing)
             if activity.isDone {
                 doneCard
@@ -62,6 +63,12 @@ struct MacActivityRow: View {
         .foregroundStyle(Color(.textPrimary))
         .background(Color(.surface))
         .clipShape(.rect(cornerRadius: 18))
+        .overlay {
+            if isSelected {
+                RoundedRectangle(cornerRadius: 18)
+                    .strokeBorder(Color.accentColor, lineWidth: 2.5)
+            }
+        }
     }
     
     private var doneCard: some View {
@@ -94,14 +101,20 @@ struct MacActivityRow: View {
         .foregroundStyle(Color(.textSecondary))
         .background(Color(.surfaceMuted))
         .clipShape(.rect(cornerRadius: 16))
+        .overlay {
+            if isSelected {
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(Color.accentColor, lineWidth: 2.5)
+            }
+        }
     }
 }
 
 #Preview {
     VStack(spacing: 8) {
-        MacActivityRow(activity: .constant(Activity.samples[0]))
-        MacActivityRow(activity: .constant(Activity.samples[2]))
-        MacActivityRow(activity: .constant(Activity.samples[3]))
+        MacActivityRow(activity: .constant(Activity.samples[0]), isSelected: false)
+        MacActivityRow(activity: .constant(Activity.samples[2]), isSelected: true)
+        MacActivityRow(activity: .constant(Activity.samples[3]), isSelected: false)
     }
     .padding(20)
     .frame(width: 640)

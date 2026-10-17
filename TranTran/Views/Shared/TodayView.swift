@@ -66,6 +66,15 @@ struct TodayView: View {
         }
     }
     
+    private func toggleSelection(of activity: Activity) {
+        if editingActivity?.id == activity.id {
+            editingActivity = nil
+        } else {
+            editingActivity = activity
+        }
+    }
+    
+    
     private var listColumn: some View {
         VStack(alignment: .leading, spacing: 16) {
             #if os(macOS)
@@ -99,9 +108,9 @@ struct TodayView: View {
                 ForEach($store.activities) { $activity in
                     if activity.isNow(at: nowMinutes) && !activity.isDone {
                         #if os(macOS)
-                        MacNowRow(activity: $activity, nowMinutes: nowMinutes)
+                        MacNowRow(activity: $activity, nowMinutes: nowMinutes, isSelected: editingActivity?.id == activity.id)
                             .onTapGesture {
-                                editingActivity = activity
+                                toggleSelection(of: activity)
                             }
                         #else
                         NowCard(activity: $activity, nowMinutes: nowMinutes)
@@ -111,9 +120,9 @@ struct TodayView: View {
                         #endif
                     } else {
                         #if os(macOS)
-                        MacActivityRow(activity: $activity)
+                        MacActivityRow(activity: $activity, isSelected: editingActivity?.id == activity.id)
                             .onTapGesture {
-                                editingActivity = activity
+                                toggleSelection(of: activity)
                             }
                         #else
                         ActivityRow(activity: $activity)
@@ -169,9 +178,11 @@ struct TodayView: View {
         .background(Color(.appBackground))
         .foregroundStyle(Color(.textPrimary))
         .fontDesign(.rounded)
+        #if os(iOS)
         .sheet(item: $editingActivity) { chosen in
             ActivityForm(store: store, activity: chosen)
         }
+        #endif
     }
 }
 
