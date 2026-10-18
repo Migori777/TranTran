@@ -26,6 +26,7 @@ struct Activity: Identifiable, Equatable {
     var id = UUID()
     var title: String
     var note: String
+    var day = Calendar.current.startOfDay(for: .now)
     var hour: Int
     var minute: Int
     var durationMinutes: Int = 30
@@ -51,6 +52,10 @@ struct Activity: Identifiable, Equatable {
     
     var intervalText: String {
         "\(timeText) – \(endTimeText)"
+    }
+    
+    func happens(on date: Date) -> Bool {
+        Calendar.current.isDate(day, inSameDayAs: date)
     }
     
     func isNow(at minutes: Int) -> Bool {
