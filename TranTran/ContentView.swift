@@ -13,6 +13,10 @@ enum AppSection {
     case balance
 }
 
+extension FocusedValues {
+    @Entry var isAddingActivity: Binding<Bool>?
+}
+
 struct ContentView: View {
     @State private var store = ActivityStore()
     @State private var selectedSection = AppSection.today
@@ -42,6 +46,12 @@ struct ContentView: View {
         .toolbar(removing: .title)
         .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
         .windowToolbarFullScreenVisibility(.onHover)
+        .focusedSceneValue(\.isAddingActivity, $isAddingActivity)
+        .onChange(of: isAddingActivity) {
+            if isAddingActivity {
+                selectedSection = .today
+            }
+        }
         #else
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedSection) {

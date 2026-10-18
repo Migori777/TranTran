@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct TranTranApp: App {
     @State private var isShowingSplash = true
+    @FocusedBinding(\.isAddingActivity) private var isAddingActivity
 
     var body: some Scene {
         WindowGroup {
@@ -24,6 +25,15 @@ struct TranTranApp: App {
         }
         #if os(macOS)
         .defaultSize(width: 1280, height:800)
+        .commands {
+            CommandGroup(replacing: .newItem) {
+                Button("Nuova attività") {
+                    isAddingActivity = true
+                }
+                .keyboardShortcut("n")
+                .disabled(isAddingActivity == nil)
+            }
+        }
         #endif
     }
 }
