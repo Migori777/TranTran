@@ -18,7 +18,7 @@ extension FocusedValues {
 }
 
 struct ContentView: View {
-    @State private var store = ActivityStore()
+    @State private var store = ActivityStore(isSaved: true)
     @State private var selectedSection = AppSection.today
     @State private var isAddingActivity = false
     @State private var selectedDate = Date.now
