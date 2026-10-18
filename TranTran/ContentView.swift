@@ -64,7 +64,7 @@ struct ContentView: View {
                         .replacingSystemTabBar()
                 }
                 Tab("Bilancio", systemImage: "chart.bar", value: .balance) {
-                    Text("\(store.doneCount)")
+                    Text("\(store.doneCount(on: .now))")
                         .replacingSystemTabBar()
                 }
             }

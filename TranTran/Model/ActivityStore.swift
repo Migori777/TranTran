@@ -10,8 +10,13 @@ import SwiftUI
 @Observable
 class ActivityStore {
     var activities = Activity.samples
-    var doneCount: Int {
-        activities.filter{ activity in activity.isDone }.count
+    
+    func count(on date: Date) -> Int {
+        activities.filter { activity in activity.happens(on: date) }.count
+    }
+    
+    func doneCount(on date: Date) -> Int {
+        activities.filter { activity in activity.happens(on: date) && activity.isDone }.count
     }
     
     func add(_ activity: Activity) {

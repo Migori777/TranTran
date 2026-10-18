@@ -21,11 +21,11 @@ struct TodayView: View {
     private var dateText: String {
         let italian = Locale(identifier: "it_IT")
         let format = Date.FormatStyle.dateTime.weekday(.wide).day().month(.wide).locale(italian)
-        return today.formatted(format)
+        return selectedDate.formatted(format)
     }
     
     private var weekday: Int {
-        Calendar.current.component(.weekday, from: today)
+        Calendar.current.component(.weekday, from: selectedDate)
     }
     
     private var nowMinutes: Int {
@@ -39,7 +39,14 @@ struct TodayView: View {
     }
     
     private var titleText: String {
-        switch weekday {
+        if Calendar.current.isDateInYesterday(selectedDate) {
+            return "Ieri. Ormai è andata."
+        }
+        
+        if Calendar.current.isDateInTomorrow(selectedDate) {
+            return "Domani. Si vedrà."
+        }
+        return switch weekday {
         case 1: "Domenica. Fai poco."
         case 2: "Coraggio, è lunedì."
         case 3: "È solo martedì."
@@ -52,11 +59,22 @@ struct TodayView: View {
     }
     
     private var summaryText: String {
-        let word = store.doneCount == 1 ? "fatta" : "fatte"
-        if store.doneCount == store.activities.count {
-            return "Ottimo! Hai completato tutte le attività!"
+        let total = store.count(on: selectedDate)
+        let done = store.doneCount(on: selectedDate)
+        let word = done == 1 ? "fatta" : "fatte"
+        if total == 0 {
+            return "Niente in programma."
         }
-        return "\(store.doneCount) \(word) su \(store.activities.count). Il resto è ottimismo."
+        if isShowingToday {
+            if done == total {
+                return "Ottimo! Hai completato tutte le attività!"
+            }
+            return "\(done) \(word) su \(total). Il resto è ottimismo."
+        }
+        if selectedDate > today {
+            return "\(total) in programma. Nessuna fretta."
+        }
+        return "\(done) \(word) su \(total). Il resto è storia."
     }
     
     private var nowIndex: Int? {
