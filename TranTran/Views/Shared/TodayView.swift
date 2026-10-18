@@ -93,7 +93,7 @@ struct TodayView: View {
     private var listColumn: some View {
         VStack(alignment: .leading, spacing: 16) {
             #if os(macOS)
-            MacHeader(dateText: dateText, titleText: titleText, summaryText: summaryText, isAdding: $isAdding)
+            MacHeader(dateText: dateText, titleText: titleText, summaryText: summaryText, selectedDate: $selectedDate, isAdding: $isAdding)
             #else
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 12) {
@@ -210,6 +210,9 @@ struct TodayView: View {
         .background(Color(.appBackground))
         .foregroundStyle(Color(.textPrimary))
         .fontDesign(.rounded)
+        .onChange(of: selectedDate) {
+            editingActivity = nil
+        }
         .onChange(of: isAdding) {
             if isAdding {
                 editingActivity = nil

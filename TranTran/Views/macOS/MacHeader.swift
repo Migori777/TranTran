@@ -11,6 +11,7 @@ struct MacHeader: View {
     let dateText: String
     let titleText: String
     let summaryText: String
+    @Binding var selectedDate: Date
     @Binding var isAdding: Bool
     
     var body: some View {
@@ -33,7 +34,7 @@ struct MacHeader: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             HStack(spacing: 8) {
-                DaySwitcher()
+                DaySwitcher(selectedDate: $selectedDate)
                 NewActivityButton(isAdding: $isAdding)
             }
         }
@@ -42,7 +43,7 @@ struct MacHeader: View {
 }
 
 #Preview {
-    MacHeader(dateText: "Giovedì 15 ottobre", titleText: "Quasi venerdì.", summaryText: "1 fatta su 5. Il resto è ottimismo.", isAdding: .constant(false))
+    MacHeader(dateText: "Giovedì 15 ottobre", titleText: "Quasi venerdì.", summaryText: "1 fatta su 5. Il resto è ottimismo.", selectedDate: .constant(Date.now), isAdding: .constant(false))
         .padding(20)
         .background(Color(.appBackground))
         .foregroundStyle(Color(.textPrimary))
