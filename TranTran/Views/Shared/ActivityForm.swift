@@ -235,6 +235,61 @@ struct ActivityForm: View {
                     .padding(.top, 8)
             }
             .font(.system(size: 14))
+            
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Colore")
+                    .font(.system(size: 14))
+                    .fontWeight(.bold)
+                    .foregroundStyle(Color(.textSecondary))
+                HStack(spacing: 0) {
+                    ForEach(ActivityColor.allCases, id: \.self) { option in
+                        if option != ActivityColor.allCases.first {
+                            Spacer(minLength: 0)
+                        }
+                        Button {
+                            color = option
+                        } label: {
+                            Circle()
+                                .fill(option.fill)
+                                .frame(width: 28, height: 28)
+                                .overlay {
+                                    if color == option {
+                                        Image(systemName: "checkmark")
+                                            .font(.system(size: 8))
+                                            .fontWeight(.heavy)
+                                            .foregroundStyle(Color(.activityInk))
+                                        Circle()
+                                            .strokeBorder(Color.accentColor, lineWidth: 2.5)
+                                    }
+                                }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+            
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Icona")
+                    .font(.system(size: 14))
+                    .fontWeight(.bold)
+                    .foregroundStyle(Color(.textSecondary))
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 6), spacing: 6) {
+                    ForEach(symbolChoices, id: \.self) { option in
+                        Button {
+                            symbol = option
+                        } label: {
+                            Image(systemName: option)
+                                .font(.system(size: 16))
+                                .fontWeight(.semibold)
+                                .foregroundStyle(symbol == option ? Color(.activityInk) : Color(.textPrimary))
+                                .frame(maxWidth: .infinity, minHeight: 32)
+                                .background(symbol == option ? color.fill : Color(.textPrimary).opacity(0.08))
+                                .clipShape(.rect(cornerRadius: 10))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
         }
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
