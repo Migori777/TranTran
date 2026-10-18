@@ -10,6 +10,7 @@ import SwiftUI
 struct ActivityForm: View {
     let store: ActivityStore
     var activity: Activity? = nil
+    var selectedDay = Date.now
     var isPanel = false
     var onClose: () -> Void = {}
     var onDraftChange: (Activity) -> Void = { _ in }
@@ -43,7 +44,7 @@ struct ActivityForm: View {
     private var draft: Activity {
         let hour = Calendar.current.component(.hour, from: startTime)
         let minute = Calendar.current.component(.minute, from: startTime)
-        return Activity(id: draftID, title: title, note: note, hour: hour, minute: minute, durationMinutes: durationMinutes, symbol: symbol, color: color)
+        return Activity(id: draftID, title: title, note: note, day: Calendar.current.startOfDay(for: selectedDay), hour: hour, minute: minute, durationMinutes: durationMinutes, symbol: symbol, color: color)
     }
     
     private var endText: String {

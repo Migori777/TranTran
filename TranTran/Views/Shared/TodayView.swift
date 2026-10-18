@@ -9,8 +9,8 @@ import SwiftUI
 
 struct TodayView: View {
     @Bindable var store: ActivityStore
+    @Binding var selectedDate: Date
     @Binding var isAdding: Bool
-    @State private var selectedDate = Date.now
     @State private var editingActivity: Activity?
     @State private var draft: Activity?
     
@@ -184,7 +184,7 @@ struct TodayView: View {
     private var sideColumn: some View {
         VStack(spacing: 16) {
             if isAdding {
-                ActivityForm(store: store, isPanel: true, onClose: { isAdding = false }, onDraftChange: { newDraft in draft = newDraft })
+                ActivityForm(store: store, selectedDay: selectedDate, isPanel: true, onClose: { isAdding = false }, onDraftChange: { newDraft in draft = newDraft })
             } else if let chosen = editingActivity {
                 ActivityForm(store: store, activity: chosen, isPanel: true, onClose: { editingActivity = nil })
                     .id(chosen.id)
@@ -247,5 +247,6 @@ struct TodayView: View {
 }
 
 #Preview {
-    TodayView(store: ActivityStore(), isAdding: .constant(false))
+    @Previewable @State var selectedDate = Date.now
+    TodayView(store: ActivityStore(), selectedDate: $selectedDate, isAdding: .constant(false))
 }

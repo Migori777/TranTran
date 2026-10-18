@@ -21,6 +21,7 @@ struct ContentView: View {
     @State private var store = ActivityStore()
     @State private var selectedSection = AppSection.today
     @State private var isAddingActivity = false
+    @State private var selectedDate = Date.now
     
     var body: some View {
         #if os(macOS)
@@ -28,7 +29,7 @@ struct ContentView: View {
             MacSidebar(selection: $selectedSection)
             switch selectedSection {
             case .today:
-                TodayView(store: store, isAdding: $isAddingActivity)
+                TodayView(store: store, selectedDate: $selectedDate, isAdding: $isAddingActivity)
             case .routine:
                 Text("Routine")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -56,7 +57,7 @@ struct ContentView: View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedSection) {
                 Tab("Oggi", systemImage: "calendar", value: .today) {
-                    TodayView(store: store, isAdding: $isAddingActivity)
+                    TodayView(store: store, selectedDate: $selectedDate, isAdding: $isAddingActivity)
                         .replacingSystemTabBar()
                 }
                 Tab("Routine", systemImage: "repeat", value: .routine) {
@@ -78,7 +79,7 @@ struct ContentView: View {
             .ignoresSafeArea(edges: .bottom)
         }
         .sheet(isPresented: $isAddingActivity) {
-            ActivityForm(store: store)
+            ActivityForm(store: store, selectedDay: selectedDate)
         }
         #endif
     }
