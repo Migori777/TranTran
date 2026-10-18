@@ -73,7 +73,15 @@ struct ActivityForm: View {
             let newActivity = Activity(title: title, note: note, hour: hour, minute: minute, durationMinutes: durationMinutes, symbol: symbol, color: color)
             store.add(newActivity)
         }
-        dismiss()
+        close()
+    }
+    
+    private func close() {
+        if isPanel {
+            onClose()
+        } else {
+            dismiss()
+        }
     }
     
     var body: some View {
@@ -141,6 +149,11 @@ struct ActivityForm: View {
                     .foregroundStyle(Color(.textSecondary))
             }
             .textFieldStyle(.plain)
+            .onSubmit {
+                if !title.isEmpty {
+                    save()
+                }
+            }
             
             VStack(alignment: .leading, spacing: 0) {
                 Rectangle()
@@ -288,6 +301,60 @@ struct ActivityForm: View {
                         }
                         .buttonStyle(.plain)
                     }
+                }
+            }
+            
+            HStack(spacing: 8) {
+                Button {
+                    onClose()
+                } label: {
+                    Text("Annulla")
+                        .frame(maxWidth: .infinity, minHeight: 40)
+                        .background(Color(.textPrimary).opacity(0.08))
+                        .clipShape(.rect(cornerRadius: 14))
+                }
+                .buttonStyle(.plain)
+                Button {
+                    if !title.isEmpty {
+                        save()
+                    }
+                } label: {
+                    Text(activity == nil ? "Aggiungi" : "Salva")
+                        .foregroundStyle(Color(.onAccent))
+                        .frame(maxWidth: .infinity, minHeight: 40)
+                        .background(Color.accentColor.opacity(title.isEmpty ? 0.35 : 1))
+                        .clipShape(.rect(cornerRadius: 14))
+                }
+                .buttonStyle(.plain)
+                .keyboardShortcut(.defaultAction)
+            }
+            .font(.system(size: 14))
+            .fontWeight(.heavy)
+            
+            if let activity {
+                VStack(spacing: 0) {
+                    Rectangle()
+                        .fill(Color(.textPrimary).opacity(0.08))
+                        .frame(height: 1)
+                    Button(role: .destructive) {
+                        store.delete(activity)
+                        onClose()
+                    } label: {
+                        Text("Elimina attività")
+                            .font(.system(size: 14))
+                            .fontWeight(.heavy)
+                            .foregroundStyle(Color(.danger))
+                            .padding(.horizontal, 12)
+                            .frame(height: 34)
+                            .contentShape(.rect)
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.top, 6)
+                    Text("Nessuno lo saprà.")
+                        .font(.system(size: 13))
+                        .fontWeight(.bold)
+                        .foregroundStyle(Color(.textSecondary))
+                        .padding(.top, 2)
                 }
             }
         }
