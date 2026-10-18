@@ -12,6 +12,7 @@ struct ActivityForm: View {
     var activity: Activity? = nil
     var isPanel = false
     var onClose: () -> Void = {}
+    var onDraftChange: (Activity) -> Void = { _ in }
     @Environment(\.dismiss) private var dismiss
     @State private var title = ""
     @State private var note = ""
@@ -21,6 +22,7 @@ struct ActivityForm: View {
     @State private var isPickingDuration = false
     @State private var color = ActivityColor.sun
     @State private var symbol = "alarm"
+    @State private var draftID = UUID()
     
     private let durationPresets = [15, 30, 60, 120, 240]
     private let panelDurations = [15, 30, 45, 60, 90, 120, 180, 240, 300, 360, 480, 600, 720]
@@ -36,6 +38,12 @@ struct ActivityForm: View {
     
     private var startText: String {
         startTime.formatted(.dateTime.hour().minute().locale(Locale(identifier: "it_IT")))
+    }
+    
+    private var draft: Activity {
+        let hour = Calendar.current.component(.hour, from: startTime)
+        let minute = Calendar.current.component(.minute, from: startTime)
+        return Activity(id: draftID, title: title, note: note, hour: hour, minute: minute, durationMinutes: durationMinutes, symbol: symbol, color: color)
     }
     
     private var endText: String {
@@ -70,8 +78,7 @@ struct ActivityForm: View {
             changed.color = color
             store.update(changed)
         } else {
-            let newActivity = Activity(title: title, note: note, hour: hour, minute: minute, durationMinutes: durationMinutes, symbol: symbol, color: color)
-            store.add(newActivity)
+            store.add(draft)
         }
         close()
     }
@@ -102,6 +109,9 @@ struct ActivityForm: View {
                 color = activity.color
                 symbol = activity.symbol
             }
+        }
+        .onChange(of: draft, initial: true) {
+            onDraftChange(draft)
         }
     }
     

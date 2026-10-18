@@ -12,6 +12,7 @@ struct TodayView: View {
     @Binding var isAdding: Bool
     @State private var selectedDate = Date.now
     @State private var editingActivity: Activity?
+    @State private var draft: Activity?
     
     private var today: Date {
         Date.now
@@ -66,6 +67,15 @@ struct TodayView: View {
         }
     }
     
+    private var activityAfterDraft: Activity? {
+        if let draft {
+            return store.activities.first { activity in
+                activity.startMinutes > draft.startMinutes
+            }
+        }
+        return nil
+    }
+    
     private func toggleSelection(of activity: Activity) {
         isAdding = false
         if editingActivity?.id == activity.id {
@@ -107,6 +117,11 @@ struct TodayView: View {
 
             VStack(spacing: 8) {
                 ForEach($store.activities) { $activity in
+                    #if os(macOS)
+                    if let draft, activity.id == activityAfterDraft?.id {
+                        MacActivityRow(activity: .constant(draft), isSelected: true)
+                    }
+                    #endif
                     if activity.isNow(at: nowMinutes) && !activity.isDone {
                         #if os(macOS)
                         MacNowRow(activity: $activity, nowMinutes: nowMinutes, isSelected: editingActivity?.id == activity.id)
@@ -133,6 +148,11 @@ struct TodayView: View {
                         #endif
                     }
                 }
+                #if os(macOS)
+                if let draft, activityAfterDraft == nil {
+                    MacActivityRow(activity: .constant(draft), isSelected: true)
+                }
+                #endif
             }
         }
     }
@@ -140,7 +160,7 @@ struct TodayView: View {
     private var sideColumn: some View {
         VStack(spacing: 16) {
             if isAdding {
-                ActivityForm(store: store, isPanel: true, onClose: { isAdding = false })
+                ActivityForm(store: store, isPanel: true, onClose: { isAdding = false }, onDraftChange: { newDraft in draft = newDraft })
             } else if let chosen = editingActivity {
                 ActivityForm(store: store, activity: chosen, isPanel: true, onClose: { editingActivity = nil })
                     .id(chosen.id)
@@ -187,6 +207,8 @@ struct TodayView: View {
         .onChange(of: isAdding) {
             if isAdding {
                 editingActivity = nil
+            } else {
+                draft = nil
             }
         }
         #if os(iOS)

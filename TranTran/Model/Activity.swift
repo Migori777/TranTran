@@ -22,8 +22,8 @@ enum ActivityColor: CaseIterable {
     }
 }
 
-struct Activity: Identifiable {
-    let id = UUID()
+struct Activity: Identifiable, Equatable {
+    var id = UUID()
     var title: String
     var note: String
     var hour: Int
