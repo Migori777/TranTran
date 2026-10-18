@@ -67,6 +67,7 @@ struct TodayView: View {
     }
     
     private func toggleSelection(of activity: Activity) {
+        isAdding = false
         if editingActivity?.id == activity.id {
             editingActivity = nil
         } else {
@@ -138,7 +139,9 @@ struct TodayView: View {
     
     private var sideColumn: some View {
         VStack(spacing: 16) {
-            if let chosen = editingActivity {
+            if isAdding {
+                ActivityForm(store: store, isPanel: true, onClose: { isAdding = false })
+            } else if let chosen = editingActivity {
                 ActivityForm(store: store, activity: chosen, isPanel: true, onClose: { editingActivity = nil })
                     .id(chosen.id)
             } else if let index = nowIndex {
@@ -181,6 +184,11 @@ struct TodayView: View {
         .background(Color(.appBackground))
         .foregroundStyle(Color(.textPrimary))
         .fontDesign(.rounded)
+        .onChange(of: isAdding) {
+            if isAdding {
+                editingActivity = nil
+            }
+        }
         #if os(iOS)
         .sheet(item: $editingActivity) { chosen in
             ActivityForm(store: store, activity: chosen)
