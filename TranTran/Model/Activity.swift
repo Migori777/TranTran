@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum ActivityColor: CaseIterable {
+enum ActivityColor: String, CaseIterable, Codable {
     case sun, mint, sky, rose, lilac, peach
     
     var fill: Color {
