@@ -38,6 +38,10 @@ struct TodayView: View {
         Calendar.current.isDate(selectedDate, inSameDayAs: today)
     }
     
+    private var isDayEmpty: Bool {
+        store.count(on: selectedDate) == 0
+    }
+    
     private var titleText: String {
         if Calendar.current.isDateInYesterday(selectedDate) {
             return "Ieri. Ormai è andata."
@@ -177,6 +181,9 @@ struct TodayView: View {
                     MacActivityRow(activity: .constant(draft), isSelected: true)
                 }
                 #endif
+                if isDayEmpty && draft == nil {
+                    EmptyDayCard(isAdding: $isAdding)
+                }
             }
         }
     }
@@ -188,11 +195,11 @@ struct TodayView: View {
             } else if let chosen = editingActivity {
                 ActivityForm(store: store, activity: chosen, isPanel: true, onClose: { editingActivity = nil })
                     .id(chosen.id)
-            } else if let index = nowIndex {
+            } else if isShowingToday, let index = nowIndex {
                 NowSummaryCard(activity: $store.activities[index], label: "In corso")
-            } else if let index = nextIndex{
+            } else if isShowingToday, let index = nextIndex {
                 NowSummaryCard(activity: $store.activities[index], label: "Prossima")
-            } else {
+            } else if isShowingToday && !isDayEmpty {
                 DayDoneCard()
             }
         }
