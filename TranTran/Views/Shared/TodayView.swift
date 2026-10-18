@@ -42,6 +42,10 @@ struct TodayView: View {
         store.count(on: selectedDate) == 0
     }
     
+    private var dayActivities: [Activity] {
+        store.activities.filter { activity in activity.happens(on: selectedDate) }
+    }
+    
     private var titleText: String {
         if Calendar.current.isDateInYesterday(selectedDate) {
             return "Ieri. Ormai è andata."
@@ -201,6 +205,8 @@ struct TodayView: View {
                 NowSummaryCard(activity: $store.activities[index], label: "Prossima")
             } else if isShowingToday && !isDayEmpty {
                 DayDoneCard()
+            } else if !isDayEmpty {
+                DaySummaryCard(activities: dayActivities)
             }
         }
     }
