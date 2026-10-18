@@ -34,6 +34,10 @@ struct TodayView: View {
         return hour * 60 + minute
     }
     
+    private var isShowingToday: Bool {
+        Calendar.current.isDate(selectedDate, inSameDayAs: today)
+    }
+    
     private var titleText: String {
         switch weekday {
         case 1: "Domenica. Fai poco."
@@ -57,20 +61,20 @@ struct TodayView: View {
     
     private var nowIndex: Int? {
         store.activities.firstIndex { activity in
-            activity.isNow(at: nowMinutes) && !activity.isDone
+            activity.happens(on: today) && activity.isNow(at: nowMinutes) && !activity.isDone
         }
     }
     
     private var nextIndex: Int? {
         store.activities.firstIndex { activity in
-            activity.startMinutes > nowMinutes && !activity.isDone
+            activity.happens(on: today) && activity.startMinutes > nowMinutes && !activity.isDone
         }
     }
     
     private var activityAfterDraft: Activity? {
         if let draft {
             return store.activities.first { activity in
-                activity.startMinutes > draft.startMinutes
+                activity.happens(on: selectedDate) && activity.startMinutes > draft.startMinutes
             }
         }
         return nil
@@ -117,35 +121,37 @@ struct TodayView: View {
 
             VStack(spacing: 8) {
                 ForEach($store.activities) { $activity in
-                    #if os(macOS)
-                    if let draft, activity.id == activityAfterDraft?.id {
-                        MacActivityRow(activity: .constant(draft), isSelected: true)
-                    }
-                    #endif
-                    if activity.isNow(at: nowMinutes) && !activity.isDone {
+                    if activity.happens(on: selectedDate) {
                         #if os(macOS)
-                        MacNowRow(activity: $activity, nowMinutes: nowMinutes, isSelected: editingActivity?.id == activity.id)
-                            .onTapGesture {
-                                toggleSelection(of: activity)
-                            }
-                        #else
-                        NowCard(activity: $activity, nowMinutes: nowMinutes)
-                            .onTapGesture {
-                                editingActivity = activity
-                            }
+                        if let draft, activity.id == activityAfterDraft?.id {
+                            MacActivityRow(activity: .constant(draft), isSelected: true)
+                        }
                         #endif
-                    } else {
-                        #if os(macOS)
-                        MacActivityRow(activity: $activity, isSelected: editingActivity?.id == activity.id)
-                            .onTapGesture {
-                                toggleSelection(of: activity)
-                            }
-                        #else
-                        ActivityRow(activity: $activity)
-                            .onTapGesture {
-                                editingActivity = activity
-                            }
-                        #endif
+                        if isShowingToday && activity.isNow(at: nowMinutes) && !activity.isDone {
+                            #if os(macOS)
+                            MacNowRow(activity: $activity, nowMinutes: nowMinutes, isSelected: editingActivity?.id == activity.id)
+                                .onTapGesture {
+                                    toggleSelection(of: activity)
+                                }
+                            #else
+                            NowCard(activity: $activity, nowMinutes: nowMinutes)
+                                .onTapGesture {
+                                    editingActivity = activity
+                                }
+                            #endif
+                        } else {
+                            #if os(macOS)
+                            MacActivityRow(activity: $activity, isSelected: editingActivity?.id == activity.id)
+                                .onTapGesture {
+                                    toggleSelection(of: activity)
+                                }
+                            #else
+                            ActivityRow(activity: $activity)
+                                .onTapGesture {
+                                    editingActivity = activity
+                                }
+                            #endif
+                        }
                     }
                 }
                 #if os(macOS)
