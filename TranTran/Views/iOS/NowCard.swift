@@ -124,6 +124,7 @@ struct NowCard: View {
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .leading)
             Button {
+                activity.togglePiece(at: index)
             } label: {
                 Circle()
                     .strokeBorder(Color(.activityInk).opacity(isNow ? 1 : 0.45), lineWidth: 2.5)

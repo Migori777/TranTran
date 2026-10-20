@@ -117,6 +117,15 @@ struct Activity: Identifiable, Equatable {
         }
     }
     
+    mutating func togglePiece(at index: Int) {
+        pieces[index].isDone.toggle()
+        if pieces.allSatisfy({ piece in piece.isDone }) {
+            isDone = true
+        } else if !pieces[index].isDone {
+            isDone = false
+        }
+    }
+    
     func nextPieceIndex(at minutes: Int) -> Int? {
         if let nowIndex = nowPieceIndex(at: minutes) {
             return pieces.indices.first { index in
