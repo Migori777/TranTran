@@ -80,6 +80,32 @@ struct Activity: Identifiable, Equatable {
         Double(minutes - startMinutes) / Double(durationMinutes)
     }
     
+    func pieceEnd(at index: Int) -> Int {
+        if index + 1 < pieces.count {
+            return pieces[index + 1].startMinutes
+        }
+        return endMinutes
+    }
+    
+    func pieceShare(at index: Int) -> Double {
+        let length = pieceEnd(at: index) - pieces[index].startMinutes
+        let total = endMinutes - pieces[0].startMinutes
+        if total <= 0 {
+            return 0
+        }
+        return Double(length) / Double(total)
+    }
+    
+    func pieceProgress(at index: Int, minutes: Int) -> Double {
+        let start = pieces[index].startMinutes
+        let length = pieceEnd(at: index) - start
+        if length <= 0 {
+            return 0
+        }
+        let value = Double(minutes - start) / Double(length)
+        return min(max(value, 0), 1)
+    }
+    
     static let samples: [Activity] = [
         Activity(title: "Sveglia", note: "Alla quarta, ma conta.", hour: 7, minute: 0, durationMinutes: 30, symbol: "sun.max", color: .sky, isDone: true),
         Activity(title: "Lavoro profondo", note: "Profondo quanto basta.", hour: 9, minute: 0, durationMinutes: 240, symbol: "laptopcomputer", color: .sun, pieces: [
