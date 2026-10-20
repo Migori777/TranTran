@@ -10,11 +10,12 @@ import SwiftUI
 @main
 struct TranTranApp: App {
     @State private var isShowingSplash = true
+    @State private var store = ActivityStore(isSaved: true)
     @FocusedBinding(\.isAddingActivity) private var isAddingActivity
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(store: store)
                 .overlay {
                     if isShowingSplash {
                         SplashView(isShowing: $isShowingSplash)
