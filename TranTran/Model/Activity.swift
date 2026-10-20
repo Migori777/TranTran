@@ -33,6 +33,7 @@ struct Activity: Identifiable, Equatable {
     var symbol: String
     var color: ActivityColor
     var isDone: Bool = false
+    var pieces: [Piece] = []
     
     var timeText: String {
         String(format: "%02d:%02d", hour, minute)
@@ -81,9 +82,16 @@ struct Activity: Identifiable, Equatable {
     
     static let samples: [Activity] = [
         Activity(title: "Sveglia", note: "Alla quarta, ma conta.", hour: 7, minute: 0, durationMinutes: 30, symbol: "sun.max", color: .sky, isDone: true),
-        Activity(title: "Lavoro profondo", note: "Profondo quanto basta.", hour: 9, minute: 0, durationMinutes: 240, symbol: "laptopcomputer", color: .sun),
+        Activity(title: "Lavoro profondo", note: "Profondo quanto basta.", hour: 9, minute: 0, durationMinutes: 240, symbol: "laptopcomputer", color: .sun, pieces: [
+            Piece(title: "Mail", hour: 9, minute: 0),
+            Piece(title: "Report", hour: 9, minute: 30),
+            Piece(title: "Call con Marco", hour: 11, minute: 0) ]),
         Activity(title: "Pranzo", note: "Lontano dalla scrivania, grazie.", hour: 13, minute: 0, durationMinutes: 60, symbol: "fork.knife", color: .mint),
-        Activity(title: "Palestra", note: "Rimandata tre volte. Zero pressioni.", hour: 18, minute: 30, durationMinutes: 90, symbol: "dumbbell", color: .rose),
+        Activity(title: "Palestra", note: "Rimandata tre volte. Zero pressioni.", hour: 18, minute: 30, durationMinutes: 90, symbol: "dumbbell", color: .rose, pieces: [
+            Piece(title: "Riscaldamento", hour: 18, minute: 30),
+            Piece(title: "Pesi", hour: 18, minute: 40),
+            Piece(title: "Stretching, forse", hour: 19, minute: 45)
+        ]),
         Activity(title: "Dormire", note: "Sul serio, stavolta.", hour: 23, minute: 0, durationMinutes: 480, symbol: "moon", color: .peach)
     ]
 }
