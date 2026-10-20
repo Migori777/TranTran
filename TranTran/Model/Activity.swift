@@ -106,6 +106,28 @@ struct Activity: Identifiable, Equatable {
         return min(max(value, 0), 1)
     }
     
+    func nowPieceIndex(at minutes: Int) -> Int? {
+        guard let timeIndex = pieces.indices.first(where: { index in
+            pieces[index].startMinutes <= minutes && minutes < pieceEnd(at: index)
+        }) else {
+            return nil
+        }
+        return pieces.indices.first { index in
+            index >= timeIndex && !pieces[index].isDone
+        }
+    }
+    
+    func nextPieceIndex(at minutes: Int) -> Int? {
+        if let nowIndex = nowPieceIndex(at: minutes) {
+            return pieces.indices.first { index in
+                index > nowIndex && !pieces[index].isDone
+            }
+        }
+        return pieces.indices.first { index in
+            pieces[index].startMinutes > minutes && !pieces[index].isDone
+        }
+    }
+    
     static let samples: [Activity] = [
         Activity(title: "Sveglia", note: "Alla quarta, ma conta.", hour: 7, minute: 0, durationMinutes: 30, symbol: "sun.max", color: .sky, isDone: true),
         Activity(title: "Lavoro profondo", note: "Profondo quanto basta.", hour: 9, minute: 0, durationMinutes: 240, symbol: "laptopcomputer", color: .sun, pieces: [
