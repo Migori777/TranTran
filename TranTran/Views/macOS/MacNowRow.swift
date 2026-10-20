@@ -11,6 +11,7 @@ struct MacNowRow: View {
     @Binding var activity: Activity
     let nowMinutes: Int
     let isSelected: Bool
+    @State private var isShowingAllPieces = false
     
     var body: some View {
         HStack(spacing: 12) {
@@ -68,9 +69,7 @@ struct MacNowRow: View {
             }
             if !activity.pieces.isEmpty {
                 pieceBar
-                if nowIndex != nil || nextIndex != nil {
-                    piecesPanel
-                }
+                piecesPanel
             }
         }
         .padding(.vertical, 16)
@@ -95,29 +94,79 @@ struct MacNowRow: View {
         activity.nextPieceIndex(at: nowMinutes)
     }
     
+    private var shownIndices: [Int] {
+        if isShowingAllPieces {
+            return Array(activity.pieces.indices)
+        }
+        return [nowIndex, nextIndex].compactMap { index in index }
+    }
+    
     private var piecesPanel: some View {
         VStack(spacing: 0) {
-            if let index = nowIndex {
-                pieceRow(at: index, isNow: true)
-            }
-            if let index = nextIndex {
-                if nowIndex != nil {
-                    Rectangle()
-                        .fill(Color(.activityInk).opacity(0.10))
-                        .frame(height: 1)
-                        .padding(.horizontal, 12)
+            ForEach(shownIndices, id: \.self) { index in
+                if index != shownIndices.first {
+                    panelLine
                 }
-                pieceRow(at: index, isNow: false)
+                pieceRow(at: index)
+            }
+            if shownIndices.count < activity.pieces.count || isShowingAllPieces {
+                if !shownIndices.isEmpty {
+                    panelLine
+                }
+                showAllButton
             }
         }
         .background(Color.white.opacity(0.45))
         .clipShape(.rect(cornerRadius: 14))
     }
     
-    private func pieceRow(at index: Int, isNow: Bool) -> some View {
+    private var panelLine: some View {
+        Rectangle()
+            .fill(Color(.activityInk).opacity(0.10))
+            .frame(height: 1)
+            .padding(.horizontal, 12)
+    }
+    
+    private var showAllButton: some View {
+        Button {
+            withAnimation(.snappy) {
+                isShowingAllPieces.toggle()
+            }
+        } label: {
+            HStack {
+                Text(isShowingAllPieces ? "Mostra meno" : "Mostra tutti e \(activity.pieces.count)")
+                    .font(.system(size: 13))
+                    .fontWeight(.black)
+                Spacer()
+                Image(systemName: isShowingAllPieces ? "chevron.up" : "chevron.down")
+                    .font(.system(size: 13))
+                    .fontWeight(.heavy)
+                    .frame(width: 16)
+            }
+            .padding(.leading, 12)
+            .padding(.trailing, 16)
+            .frame(height: 36)
+            .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(Color(.activityInk).opacity(0.8))
+    }
+    
+    private func label(for index: Int) -> String {
+        if index == nowIndex {
+            return "Ora"
+        }
+        if index == nextIndex {
+            return "Poi"
+        }
+        return ""
+    }
+    
+    private func pieceRow(at index: Int) -> some View {
         let piece = activity.pieces[index]
+        let isNow = index == nowIndex
         return HStack(spacing: 10) {
-            Text(isNow ? "Ora" : "Poi")
+            Text(label(for: index))
                 .font(.system(size: 11))
                 .fontWeight(.black)
                 .textCase(.uppercase)
@@ -132,19 +181,31 @@ struct MacNowRow: View {
             Text(piece.title)
                 .font(.system(size: 15))
                 .fontWeight(isNow ? .black : .heavy)
+                .strikethrough(piece.isDone)
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .leading)
             Button {
                 activity.togglePiece(at: index)
             } label: {
-                Circle()
-                    .strokeBorder(Color(.activityInk).opacity(isNow ? 1 : 0.45), lineWidth: 2.5)
-                    .frame(width: 20, height: 20)
-                    .frame(width: 36, height: 36)
-                    .contentShape(.rect)
+                ZStack {
+                    if piece.isDone {
+                        Circle()
+                            .fill(Color(.activityInk))
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 10))
+                            .fontWeight(.heavy)
+                            .foregroundStyle(.white)
+                    } else {
+                        Circle()
+                            .strokeBorder(Color(.activityInk).opacity(isNow ? 1 : 0.45), lineWidth: 2.5)
+                    }
+                }
+                .frame(width: 20, height: 20)
+                .frame(width: 36, height: 36)
+                .contentShape(.rect)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Segna il pezzo \(piece.title) come fatto")
+            .accessibilityLabel(piece.isDone ? "Pezzo \(piece.title): fatto. Tocca per annullare" : "Segna il pezzo \(piece.title) come fatto")
         }
         .foregroundStyle(Color(.activityInk).opacity(isNow ? 1 : 0.8))
         .padding(.leading, 12)
