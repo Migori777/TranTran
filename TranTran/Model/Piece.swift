@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Piece: Identifiable, Equatable {
+struct Piece: Identifiable, Equatable, Codable {
     var id = UUID()
     var title: String
     var hour: Int

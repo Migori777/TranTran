@@ -20,6 +20,7 @@ final class StoredActivity {
     var symbol: String
     var color: ActivityColor
     var isDone: Bool
+    var pieces: [Piece] = []
     
     init(from activity: Activity) {
         id = activity.id
@@ -32,9 +33,10 @@ final class StoredActivity {
         symbol = activity.symbol
         color = activity.color
         isDone = activity.isDone
+        pieces = activity.pieces
     }
     
     var activity: Activity {
-        Activity(id: id, title: title, note: note, day: day, hour: hour, minute: minute, durationMinutes: durationMinutes, symbol: symbol, color: color, isDone: isDone)
+        Activity(id: id, title: title, note: note, day: day, hour: hour, minute: minute, durationMinutes: durationMinutes, symbol: symbol, color: color, isDone: isDone, pieces: pieces)
     }
 }
