@@ -10,6 +10,7 @@ import SwiftUI
 struct NowSummaryCard: View {
     @Binding var activity: Activity
     let label: String
+    let nowMinutes: Int
     
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -53,6 +54,10 @@ struct NowSummaryCard: View {
                     .frame(height: 1)
             }
             
+            if !activity.pieces.isEmpty {
+                piecesSection
+            }
+            
             HStack(spacing: 8) {
                 Button {
                     activity.isDone.toggle()
@@ -84,6 +89,84 @@ struct NowSummaryCard: View {
         .background(Color(.surface))
         .clipShape(.rect(cornerRadius: 24))
     }
+    
+    private var nowIndex: Int? {
+        activity.nowPieceIndex(at: nowMinutes)
+    }
+    
+    private var doneCount: Int {
+        activity.pieces.filter { piece in piece.isDone }.count
+    }
+    
+    private var piecesSection: some View {
+        VStack(spacing: 4) {
+            HStack {
+                Text("Pezzi")
+                    .fontWeight(.bold)
+                    .foregroundStyle(Color(.textSecondary))
+                Spacer()
+                Text("\(doneCount) di \(activity.pieces.count)")
+                    .fontWeight(.heavy)
+            }
+            .font(.system(size: 14))
+            VStack(spacing: 0) {
+                ForEach(activity.pieces.indices, id: \.self) { index in
+                    pieceRow(at: index)
+                }
+            }
+        }
+    }
+    
+    private func pieceRow(at index: Int) -> some View {
+        let piece = activity.pieces[index]
+        let isNow = index == nowIndex
+        return HStack(spacing: 10) {
+            Text(piece.timeText)
+                .font(.system(size: 13))
+                .fontWeight(isNow ? .black : .heavy)
+                .foregroundStyle(isNow ? Color(.textPrimary) : Color(.textSecondary))
+                .fixedSize()
+                .frame(minWidth: 44, alignment: .leading)
+            Text(piece.title)
+                .font(.system(size: 14))
+                .fontWeight(isNow ? .black : .heavy)
+                .strikethrough(piece.isDone)
+                .foregroundStyle(piece.isDone ? Color(.textSecondary) : Color(.textPrimary))
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            if isNow {
+                Text("Ora")
+                    .font(.system(size: 11))
+                    .fontWeight(.black)
+                    .textCase(.uppercase)
+                    .kerning(0.9)
+                    .foregroundStyle(Color.accentColor)
+            }
+            Button {
+                activity.togglePiece(at: index)
+            } label: {
+                ZStack {
+                    if piece.isDone {
+                        Circle()
+                            .fill(Color.accentColor)
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 8))
+                            .fontWeight(.heavy)
+                            .foregroundStyle(Color(.onAccent))
+                    } else {
+                        Circle()
+                            .strokeBorder(Color(.ring), lineWidth: 2.5)
+                    }
+                }
+                .frame(width: 18, height: 18)
+                .frame(width: 28, height: 28)
+                .contentShape(.rect)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(piece.isDone ? "Pezzo \(piece.title): fatto. Clicca per annullare" : "Segna il pezzo \(piece.title) come fatto")
+        }
+        .frame(height: 34)
+    }
 }
 
 struct DayDoneCard: View {
@@ -105,9 +188,10 @@ struct DayDoneCard: View {
 }
 
 #Preview {
+    @Previewable @State var work = Activity.samples[1]
     VStack(spacing: 16) {
-        NowSummaryCard(activity: .constant(Activity.samples[1]), label: "In corso")
-        NowSummaryCard(activity: .constant(Activity.samples[2]), label: "Prossima")
+        NowSummaryCard(activity: $work, label: "In corso", nowMinutes: 10 * 60 + 10)
+        NowSummaryCard(activity: .constant(Activity.samples[2]), label: "Prossima", nowMinutes: 10 * 60 + 10)
         DayDoneCard()
     }
     .padding(20)

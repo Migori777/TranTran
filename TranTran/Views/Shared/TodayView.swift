@@ -200,9 +200,9 @@ struct TodayView: View {
                 ActivityForm(store: store, activity: chosen, isPanel: true, onClose: { editingActivity = nil })
                     .id(chosen.id)
             } else if isShowingToday, let index = nowIndex {
-                NowSummaryCard(activity: $store.activities[index], label: "In corso")
+                NowSummaryCard(activity: $store.activities[index], label: "In corso", nowMinutes: nowMinutes)
             } else if isShowingToday, let index = nextIndex {
-                NowSummaryCard(activity: $store.activities[index], label: "Prossima")
+                NowSummaryCard(activity: $store.activities[index], label: "Prossima", nowMinutes: nowMinutes)
             } else if isShowingToday && !isDayEmpty {
                 DayDoneCard()
             } else if !isDayEmpty {
