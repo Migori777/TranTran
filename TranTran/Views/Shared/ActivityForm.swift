@@ -25,6 +25,7 @@ struct ActivityForm: View {
     @State private var symbol = "alarm"
     @State private var draftID = UUID()
     @State private var pieces: [Piece] = []
+    @State private var pickingPieceID: UUID?
     
     private let durationPresets = [15, 30, 60, 120, 240]
     private let panelDurations = [15, 30, 45, 60, 90, 120, 180, 240, 300, 360, 480, 600, 720]
@@ -81,6 +82,15 @@ struct ActivityForm: View {
         }
         withAnimation(.snappy) {
             pieces.append(Piece(title: "", hour: newStart / 60 % 24, minute: newStart % 60))
+        }
+    }
+    
+    private func timeBinding(_ piece: Binding<Piece>) -> Binding<Date> {
+        Binding {
+            Calendar.current.date(bySettingHour: piece.wrappedValue.hour, minute: piece.wrappedValue.minute, second: 0, of: .now) ?? .now
+        } set: { newTime in
+            piece.wrappedValue.hour = Calendar.current.component(.hour, from: newTime)
+            piece.wrappedValue.minute = Calendar.current.component(.minute, from: newTime)
         }
     }
     
@@ -649,14 +659,22 @@ struct ActivityForm: View {
             VStack(spacing: 0) {
                 ForEach($pieces) { $piece in
                     HStack(spacing: 10) {
-                        Text(piece.timeText)
-                            .font(.footnote)
-                            .fontWeight(.black)
-                            .foregroundStyle(Color.accentColor)
-                            .padding(.horizontal, 10)
-                            .frame(height: 30)
-                            .background(Color(.accentSoft))
-                            .clipShape(.rect(cornerRadius: 10))
+                        Button {
+                            withAnimation(.snappy) {
+                                pickingPieceID = pickingPieceID == piece.id ? nil : piece.id
+                            }
+                        } label: {
+                            Text(piece.timeText)
+                                .font(.footnote)
+                                .fontWeight(.black)
+                                .foregroundStyle(Color.accentColor)
+                                .padding(.horizontal, 10)
+                                .frame(height: 30)
+                                .background(Color(.accentSoft))
+                                .clipShape(.rect(cornerRadius: 10))
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Orario di \(piece.title): \(piece.timeText)")
                         TextField("Nome del pezzo", text: $piece.title, prompt: Text("Nome del pezzo").foregroundStyle(Color(.textSecondary)))
                             .font(.callout)
                             .fontWeight(.heavy)
@@ -677,6 +695,16 @@ struct ActivityForm: View {
                         .accessibilityLabel("Togli \(piece.title)")
                     }
                     .frame(height: 52)
+                    if pickingPieceID == piece.id {
+                        DatePicker("Orario del pezzo", selection: timeBinding($piece), displayedComponents: .hourAndMinute)
+                            .labelsHidden()
+                        #if os(iOS)
+                            .datePickerStyle(.wheel)
+                        #endif
+                            .environment(\.locale, Locale(identifier: "it_IT"))
+                            .frame(maxWidth: .infinity)
+                            .padding(.trailing, 12)
+                    }
                     Rectangle()
                         .fill(Color(.textPrimary).opacity(0.08))
                         .frame(height: 1)
