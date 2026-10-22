@@ -24,6 +24,7 @@ struct ActivityForm: View {
     @State private var color = ActivityColor.sun
     @State private var symbol = "alarm"
     @State private var draftID = UUID()
+    @State private var pieces: [Piece] = []
     
     private let durationPresets = [15, 30, 60, 120, 240]
     private let panelDurations = [15, 30, 45, 60, 90, 120, 180, 240, 300, 360, 480, 600, 720]
@@ -44,7 +45,7 @@ struct ActivityForm: View {
     private var draft: Activity {
         let hour = Calendar.current.component(.hour, from: startTime)
         let minute = Calendar.current.component(.minute, from: startTime)
-        return Activity(id: draftID, title: title, note: note, day: Calendar.current.startOfDay(for: selectedDay), hour: hour, minute: minute, durationMinutes: durationMinutes, symbol: symbol, color: color)
+        return Activity(id: draftID, title: title, note: note, day: Calendar.current.startOfDay(for: selectedDay), hour: hour, minute: minute, durationMinutes: durationMinutes, symbol: symbol, color: color, pieces: savedPieces)
     }
     
     private var endText: String {
@@ -65,6 +66,24 @@ struct ActivityForm: View {
         startTime = Calendar.current.date(byAdding: .minute, value: minutes, to: startTime) ?? startTime
     }
     
+    private var savedPieces: [Piece] {
+        pieces
+            .filter { piece in !piece.title.isEmpty }
+            .sorted { first, second in first.startMinutes < second.startMinutes }
+    }
+    
+    private func addPiece() {
+        let hour = Calendar.current.component(.hour, from: startTime)
+        let minute = Calendar.current.component(.minute, from: startTime)
+        var newStart = hour * 60 + minute
+        if let last = pieces.last {
+            newStart = last.startMinutes + 15
+        }
+        withAnimation(.snappy) {
+            pieces.append(Piece(title: "", hour: newStart / 60 % 24, minute: newStart % 60))
+        }
+    }
+    
     private func save() {
         let hour = Calendar.current.component(.hour, from: startTime)
         let minute = Calendar.current.component(.minute, from: startTime)
@@ -77,6 +96,7 @@ struct ActivityForm: View {
             changed.durationMinutes = durationMinutes
             changed.symbol = symbol
             changed.color = color
+            changed.pieces = savedPieces
             store.update(changed)
         } else {
             store.add(draft)
@@ -109,6 +129,7 @@ struct ActivityForm: View {
                 durationMinutes = activity.durationMinutes
                 color = activity.color
                 symbol = activity.symbol
+                pieces = activity.pieces
             }
         }
         .onChange(of: draft, initial: true) {
@@ -561,6 +582,7 @@ struct ActivityForm: View {
                         .background(Color(.surface))
                         .clipShape(.rect(cornerRadius: 20))
                     }
+                    piecesSection
                     if let activity {
                         VStack(spacing: 8) {
                             Button(role: .destructive) {
@@ -613,6 +635,84 @@ struct ActivityForm: View {
             }
         }
         .presentationDragIndicator(.visible)
+    }
+    
+    private var piecesSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Dentro questa attività")
+                .font(.caption)
+                .fontWeight(.heavy)
+                .textCase(.uppercase)
+                .kerning(0.7)
+                .foregroundStyle(Color(.textSecondary))
+                .padding(.leading, 4)
+            VStack(spacing: 0) {
+                ForEach($pieces) { $piece in
+                    HStack(spacing: 10) {
+                        Text(piece.timeText)
+                            .font(.footnote)
+                            .fontWeight(.black)
+                            .foregroundStyle(Color.accentColor)
+                            .padding(.horizontal, 10)
+                            .frame(height: 30)
+                            .background(Color(.accentSoft))
+                            .clipShape(.rect(cornerRadius: 10))
+                        TextField("Nome del pezzo", text: $piece.title, prompt: Text("Nome del pezzo").foregroundStyle(Color(.textSecondary)))
+                            .font(.callout)
+                            .fontWeight(.heavy)
+                            .textFieldStyle(.plain)
+                        Button {
+                            withAnimation(.snappy) {
+                                pieces.removeAll { item in item.id == piece.id }
+                            }
+                        } label: {
+                            Image(systemName: "minus.circle")
+                                .font(.body)
+                                .fontWeight(.bold)
+                                .foregroundStyle(Color(.textSecondary))
+                                .frame(width: 44, height: 44)
+                                .contentShape(.rect)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Togli \(piece.title)")
+                    }
+                    .frame(height: 52)
+                    Rectangle()
+                        .fill(Color(.textPrimary).opacity(0.08))
+                        .frame(height: 1)
+                        .padding(.trailing, 12)
+                }
+                Button {
+                    addPiece()
+                } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: "plus")
+                            .font(.caption)
+                            .fontWeight(.bold)
+                            .foregroundStyle(Color(.onAccent))
+                            .frame(width: 26, height: 26)
+                            .background(Color.accentColor)
+                            .clipShape(.circle)
+                        Text("Aggiungi un pezzo")
+                            .font(.callout)
+                            .fontWeight(.heavy)
+                            .foregroundStyle(Color.accentColor)
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 52, alignment: .leading)
+                    .contentShape(.rect)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.leading, 16)
+            .padding(.trailing, 4)
+            .background(Color(.surface))
+            .clipShape(.rect(cornerRadius: 20))
+            Text("Facoltativi, come i buoni propositi.")
+                .font(.footnote)
+                .fontWeight(.bold)
+                .foregroundStyle(Color(.textSecondary))
+                .padding(.leading, 4)
+        }
     }
 }
 
